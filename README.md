@@ -11,3 +11,7 @@ More details to come
 ## Create your own calibrations
 
 ## Workflow
+
+<p align = "center">
+<img src="images/workflow.PNG" width=900>
+</p>
