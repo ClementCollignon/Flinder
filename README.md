@@ -13,11 +13,18 @@ I am working on a second version based on pymmCore and micromanager that will ci
   - [How Does Flinder Works?](#how-does-flinder-work)
   - [Prerequisites](#prerequisites)
   - [Installation](#installation)
-- [Configuration](#configuration)
+- [Step by Step Guide](#step-by-step-guide)
+  - [Create a User Profile](#create-a-user-profile)
+  - [Information about the scan](#information-about-the-scan)
+  - [Stitching and Hunting](#stitching-and-hunting)
+  - [Select the Best Flakes](#select-the-best-flakes)
+  - [Close-Up Snaps](#close-up-snaps)
+  - [Create Summary pdf](#create-summary-pdf)
+  - [Calibration](#calibration)
+  - [Train your AI](#train-your-AI)
+
 
 ## Introduction
-
-lorem ipsum
 
 ## Features
 
@@ -38,8 +45,22 @@ lorem ipsum
 
 ### Prerequisites
 
-lorem ipsum
-
 ### Installation
 
-lorem ipsum
+## Step by Step Guide
+
+### Create a User Profile
+
+### Information about the scan
+
+### Stitching and Hunting
+
+### Select the Best Flakes
+
+### Close-Up Snaps
+
+### Create Summary pdf
+
+### Calibration
+
+### Train your AI
