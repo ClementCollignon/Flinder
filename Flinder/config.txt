@@ -10,4 +10,4 @@ CCD	2880	2048
 offsets_X	-45	-13	2	0	15
 offsets_Y	-6	15	2	0	2
 offsets_Z	-7.8	3	1.5	0	-7.2
-scale 0.96
+scale	0.96

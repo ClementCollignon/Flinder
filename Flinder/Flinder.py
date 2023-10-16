@@ -31,8 +31,8 @@ config = functions.get_config()
  LOW_RES, HIGH_RES, CCD,
  OFFSET_X, OFFSET_Y, OFFSET_Z) = config
 
-scaling_factor=SCREEN_SCALING
-police_factor=scaling_factor
+scaling_factor = float(SCREEN_SCALING)
+police_factor = scaling_factor
 
 size_l=int(28/scaling_factor*police_factor)
 size_s=int(18/scaling_factor*police_factor)
