@@ -1,0 +1,13 @@
+main_folder	C:\Users\LAB-nanooptomechanic\Documents\Param\Flinder_v13
+screen_scaling	2
+zeros	4
+FoV	2.7648	1.9661
+overlap	0.05
+jpg_number	4
+low_res	3x8_DS-Fi3_1/2
+high_res	3x8_DS-Fi3
+CCD	2880	2048
+offsets_X	-45	-13	2	0	15
+offsets_Y	-6	15	2	0	2
+offsets_Z	-7.8	3	1.5	0	-7.2
+scale 0.96
