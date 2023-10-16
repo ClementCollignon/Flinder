@@ -10,7 +10,7 @@ I am working on a second version based on pymmCore and micromanager that will ci
 - [Introduction](#introduction)
 - [Features](#features)
 - [Getting Started](#getting-started)
-  - [How Flinder Works?](#how-flinder-works)
+  - [How Does Flinder Works?](#how-does-flinder-work)
   - [Prerequisites](#prerequisites)
   - [Installation](#installation)
 - [Configuration](#configuration)
@@ -30,7 +30,7 @@ lorem ipsum
 
 ## Getting Started
 
-### How Flinder Works?
+### How Does Flinder Work?
 
 <p align = "center">
 <img src="images/workflow2.PNG" width=900>
