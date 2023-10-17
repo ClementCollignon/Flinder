@@ -26,9 +26,13 @@ I am working on a second version based on pymmCore and micromanager that will ci
 
 ## Introduction
 
+A significant portion of a student's life in the van der Waals community is dedicated to hunting various 2D materials, such as graphene or hBN, among others. This task is often tedious and, in the case of monolayer hBN, can be nearly impossible.
+
+The goal of Flinder is to largely automate the process and provide users with sufficient information to choose the right flakes for their projects, as well as to easily locate those flakes when it's time to start creating a new heterostructure.
+
 ## Features
 
-- Automated scanning of silicon wafers of any size
+- Automated scanning of silicon wafers of almost any size
 - Flake detection and identification 
 - Flake size characterization
 - Slowly build your own database of good and bad flakes for each user and each material to speed up hunting with AI
