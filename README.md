@@ -43,6 +43,18 @@ The goal of Flinder is to largely automate the process and provide users with su
 
 ### How Does Flinder Work?
 
+A brief summary of the process:
+
+  - Each chip is scanned at low magnification.
+  - Using statistics from the hundreds of pictures taken during the scan, each picture will be color-corrected, and they will then be stitched together to form a wide-field view of the wafer.
+  - Because the color profile is now normalized, we can start identifying flakes by their RGB values.
+  - Since other dirt or glue marks can have the same RGB values as the flakes you want to identify, each potential flake candidate is passed to a Convolutional Neural Network that will decide whether the flake should be kept or not. This will also help distinguish between usable clean flakes and dirty ones.
+  - The user then has the final say and chooses whether to keep the flake or not.
+  - This choice is stored in a database and can be used to train the neural network.
+  Each user has their own database and neural network as needs vary depending on research projects.
+  - A close-up snapshot is taken of the selected flakes in bright field and dark field.
+  - A PDF report is generated with all relevant information for each selected flake. For each flake, the user will have access to dimensions, position on the chip, the number of layers, and close-up snapshots in bright and dark fields.
+
 <p align = "center">
 <img src="images/workflow2.PNG" width=900>
 </p>
