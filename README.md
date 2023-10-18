@@ -67,6 +67,10 @@ A brief summary of the process:
 
 ### Create a User Profile
 
+<p align = "center">
+<img src="images/Create_user.PNG" width=900>
+</p>
+
 ### Information about the scan
 
 ### Stitching and Hunting
