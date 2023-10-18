@@ -1,31 +1,33 @@
 import tkinter as tk
+from tkinter import ttk
+from tkinter import filedialog
+
 import os
+import sys
+
 import functions
 import Stitcher
 import Hunter_parallele
 import Auto_functions
+import ThreadedTrainer
+
 import numpy as np
 import multiprocessing as mp
-import ThreadedTrainer
-import sys
 
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 import queue
 
-from tkinter import ttk
-from tkinter import filedialog
-
 from PIL import Image, ImageTk
 
 import shutil
 
-config = functions.get_config()
+# Load configuration from config file
 (MAIN_FOLDER, SCREEN_SCALING, ZEROS, 
  FOV, OVERLAP, SCALE, JPG,
  LOW_RES, HIGH_RES, CCD,
- OFFSET_X, OFFSET_Y, OFFSET_Z) = config
+ OFFSET_X, OFFSET_Y, OFFSET_Z) = functions.get_config()
 
 scaling_factor = float(SCREEN_SCALING)
 police_factor = scaling_factor
@@ -42,55 +44,22 @@ Window_size=[2400,1270]
 
 
 class Root(tk.Tk):
+    """The main GUI.
+    """ 
     def __init__(self):
         super(Root, self).__init__()
         self.title("Flinder")
+        self.protocol("WM_DELETE_WINDOW", self.on_closing_main)
         
         self.minsize(int(Window_size[0]/scaling_factor), int(Window_size[1]/scaling_factor))
         self.wm_iconbitmap('icon.ico')
         self.configure(bg=color_set[0])
         
-        self.nosepieces=["5x","10x","20x","50x","100x"]
-        self.overlap = OVERLAP
-        self.Fieldvalues=[FOV[0]*(1-self.overlap),FOV[1]*(1-self.overlap)]
+        self.setup_useful_variables()
+        self.setup_running_threads_indicators()
+        self.split_main_window()
+        self.setup_working_folder_panel()
         
-        self.factors=[1,2,4,10,20]
-        self.step_focus = [3,4,5,6,7]
-        
-        self.zaxis=[(2,0.5,10),(2,0.5,0.1),(1,0.25,0.05),(1,0.25,0.05),(0.5,0.1,0.01)]
-        self.zaxis_step=[10,10,30]
-        
-        self.stitching_running=0
-        self.hunting_running=0
-        self.stitch_counter=0
-        self.hunt_counter=0
-        
-        
-        self.protocol("WM_DELETE_WINDOW", self.on_closing_main)
-        
-        #Create two vertical lines to separate the window in 3 pannels
-        Vertical_ligne1=tk.Frame(self,height=Window_size[1]/scaling_factor,width=2,bg=color_set[1])
-        Vertical_ligne1.place(x=799/scaling_factor,y=0)
-
-        Vertical_ligne2=tk.Frame(self,height=Window_size[1]/scaling_factor,width=2,bg=color_set[1])
-        Vertical_ligne2.place(x=1599/scaling_factor,y=0)
-
-        #Define the working folder
-        X,Y=30/scaling_factor,10/scaling_factor
-        Label_working_folder = tk.Label(self,  text="Working Folder", fg='black', font=('helvetica', size_l), bg = color_set[0])
-        Label_working_folder.place(x=X, y=Y, anchor = 'nw')
-        
-        X,Y,height,width=195/scaling_factor,Y+120/scaling_factor,170/scaling_factor,590/scaling_factor
-        Frame_path_working_folder=tk.Frame(self,height=height,width=width,bg=color_set[1])
-        Frame_path_working_folder.place(x=X,y=Y,anchor='nw')
-        
-        X,Y=200/scaling_factor,Y+5/scaling_factor
-        self.Label_path = tk.Label(self,  text="Path: ", fg='black', font=('helvetica', size_xs), bg = color_set[1])
-        self.Label_path.place(x=X, y=Y, anchor = 'nw')
-        
-        X,Y=30/scaling_factor,Y-5/scaling_factor
-        Button_browse = ttk.Button(self, text = "Browse",command = self.workingfolderDialog)
-        Button_browse.place(x=X,y=Y,anchor='nw')
 
         #Scanning size text and entry
         posX,posY=30/scaling_factor,320/scaling_factor
@@ -361,6 +330,49 @@ class Root(tk.Tk):
         
         self.Login_popup()
     
+    def setup_useful_variables(self):
+        self.nosepieces=["5x","10x","20x","50x","100x"]
+        self.overlap = OVERLAP
+        self.Fieldvalues=[FOV[0]*(1-self.overlap),FOV[1]*(1-self.overlap)]
+        
+        self.factors=[1,2,4,10,20]
+        self.step_focus = [3,4,5,6,7]
+        
+        self.zaxis=[(2,0.5,10),(2,0.5,0.1),(1,0.25,0.05),(1,0.25,0.05),(0.5,0.1,0.01)]
+        self.zaxis_step=[10,10,30]
+    
+    def setup_running_threads_indicators(self):
+        self.stitching_running = False
+        self.hunting_running = False
+        self.stitch_counter = 0
+        self.hunt_counter = 0
+    
+    def split_main_window(self):
+        #Create two vertical lines to separate the window in 3 pannels
+        Vertical_ligne1=tk.Frame(self,height=Window_size[1]/scaling_factor,width=2,bg=color_set[1])
+        Vertical_ligne1.place(x=799/scaling_factor,y=0)
+
+        Vertical_ligne2=tk.Frame(self,height=Window_size[1]/scaling_factor,width=2,bg=color_set[1])
+        Vertical_ligne2.place(x=1599/scaling_factor,y=0)
+
+    def setup_working_folder_panel(self):
+        #Define the working folder
+        X,Y=30/scaling_factor,10/scaling_factor
+        Label_working_folder = tk.Label(self,  text="Working Folder", fg='black', font=('helvetica', size_l), bg = color_set[0])
+        Label_working_folder.place(x=X, y=Y, anchor = 'nw')
+        
+        X,Y,height,width=195/scaling_factor,Y+120/scaling_factor,170/scaling_factor,590/scaling_factor
+        Frame_path_working_folder=tk.Frame(self,height=height,width=width,bg=color_set[1])
+        Frame_path_working_folder.place(x=X,y=Y,anchor='nw')
+        
+        X,Y=200/scaling_factor,Y+5/scaling_factor
+        self.Label_path = tk.Label(self,  text="Path: ", fg='black', font=('helvetica', size_xs), bg = color_set[1])
+        self.Label_path.place(x=X, y=Y, anchor = 'nw')
+        
+        X,Y=30/scaling_factor,Y-5/scaling_factor
+        Button_browse = ttk.Button(self, text = "Browse",command = self.workingfolderDialog)
+        Button_browse.place(x=X,y=Y,anchor='nw')
+
     def on_closing_main(self):
         if hasattr(self, "trainer"):
             self.trainer.join()
@@ -368,7 +380,6 @@ class Root(tk.Tk):
             self.hunter.join()
         self.destroy()
         sys.exit()
-        pass
     
     def Login_popup(self):
         self.window_login = tk.Toplevel(bg=color_set[0],bd=2)
