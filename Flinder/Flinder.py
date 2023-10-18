@@ -14,16 +14,12 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 import queue
 
-from tkinter import *
 from tkinter import ttk
 from tkinter import filedialog
 
-import PIL
 from PIL import Image, ImageTk
 
 import shutil
-
-PIL.Image.MAX_IMAGE_PIXELS = 11660313600
 
 config = functions.get_config()
 (MAIN_FOLDER, SCREEN_SCALING, ZEROS, 
@@ -38,10 +34,7 @@ size_l=int(28/scaling_factor*police_factor)
 size_s=int(18/scaling_factor*police_factor)
 size_xs=int(12/scaling_factor*police_factor)
 
-color_set=['#f2dbd0','#c8c9e6','#e3baa6']
-color_set=['#f0e6e6','#cacad9','#e3baa6']
 color_error="#EC7063"
-
 color_set=['#e3e4e7','#ffffff','#d9d9d9']
 text_color='#312820'
 
@@ -184,12 +177,12 @@ class Root(tk.Tk):
         
         X,Y,Ystep=850/scaling_factor,810/scaling_factor,85/scaling_factor
         
-        self.Var_hunt_material = StringVar()
+        self.Var_hunt_material = tk.StringVar()
     
         # Hunt_choices = set(os.listdir("Materials"))
         Hunt_choices = [""]
         
-        self.Optionmenu_hunt = OptionMenu(self, self.Var_hunt_material, *Hunt_choices, command = self.actualize_range)
+        self.Optionmenu_hunt = tk.OptionMenu(self, self.Var_hunt_material, *Hunt_choices, command = self.actualize_range)
         self.Optionmenu_hunt.config(font=('helvetica', size_s),width=14,bg = color_set[0])
         self.Optionmenu_hunt.place(x=X,y=Y,anchor='w')
         
@@ -234,20 +227,20 @@ class Root(tk.Tk):
         Frame_hunt=tk.Frame(self,height=height,width=width,bg=color_set[1])
         Frame_hunt.place(x=X,y=Y,anchor='nw')
         
-        lw_hunt = Label(self,  text="Progress:", fg='black', font=('helvetica', int(size_xs/1)), bg = color_set[1],justify='left')
+        lw_hunt = tk.Label(self,  text="Progress:", fg='black', font=('helvetica', int(size_xs/1)), bg = color_set[1],justify='left')
         lw_hunt.place(x=X, y=Y, anchor = 'nw')
         
         self.label_hunt = tk.Label(self,  text="", fg='black', font=('helvetica', int(size_xs/1)), bg = color_set[1],justify='left')
         self.label_hunt.place(x=X+150/scaling_factor, y=Y, anchor = 'nw')
         
         #Select flakes
-        lw5 = Label(self,  text="Select Flakes", fg='black', font=('helvetica', size_l), bg = color_set[0])
+        lw5 = tk.Label(self,  text="Select Flakes", fg='black', font=('helvetica', size_l), bg = color_set[0])
         lw5.place(x=1630/scaling_factor, y=10/scaling_factor, anchor = 'nw')
         
-        frame_path=Frame(self,height=55/scaling_factor,width=590/scaling_factor,bg=color_set[1])
+        frame_path=tk.Frame(self,height=55/scaling_factor,width=590/scaling_factor,bg=color_set[1])
         frame_path.place(x=(1600+195)/scaling_factor,y=150/scaling_factor,anchor='nw')
         
-        self.label_select = Label(self,  text="No selection done", fg='black', font=('helvetica', size_xs), bg = color_set[1])
+        self.label_select = tk.Label(self,  text="No selection done", fg='black', font=('helvetica', size_xs), bg = color_set[1])
         self.label_select.place(x=(480+1600)/scaling_factor, y=175/scaling_factor, anchor = 'center')
         
         self.button_select = ttk.Button(self, text = "Select",command = self.doSelection)
@@ -255,45 +248,45 @@ class Root(tk.Tk):
         
         
         #Bright field 
-        lw6 = Label(self,  text="Step 1: 50x scan", fg='black', font=('helvetica', size_l), bg = color_set[0])
+        lw6 = tk.Label(self,  text="Step 1: 50x scan", fg='black', font=('helvetica', size_l), bg = color_set[0])
         lw6.place(x=1630/scaling_factor, y=260/scaling_factor, anchor = 'nw')
         
         X0,Y0=1650,410
-        lw61 = Label(self,  text="Exposure:             ms", fg='black', font=('helvetica', size_s), bg = color_set[0])
+        lw61 = tk.Label(self,  text="Exposure:             ms", fg='black', font=('helvetica', size_s), bg = color_set[0])
         lw61.place(x=(X0)/scaling_factor, y=(Y0)/scaling_factor, anchor = 'w')
         
         shift=250
         self.entry_exposure_BF_50 = tk.Entry(self,width=4,font=('helvetica', size_s)) 
         self.entry_exposure_BF_50.place(x=(X0+shift)/scaling_factor, y=Y0/scaling_factor, anchor='w')
         
-        frame_BF=Frame(self,height=100/scaling_factor,width=320/scaling_factor,bg=color_set[1])
+        frame_BF=tk.Frame(self,height=100/scaling_factor,width=320/scaling_factor,bg=color_set[1])
         frame_BF.place(x=2070/scaling_factor,y=(Y0+50)/scaling_factor,anchor='nw')
         
         self.button_BF = ttk.Button(self, text = " Create Macro ",command = self.create50xmacro)
         self.button_BF.place(x=2150/scaling_factor,y=(Y0+0/2)/scaling_factor,anchor='w')
         
-        self.Label_macro_BF=Label(self,  text="Don't type any input\nfor auto-exposure", fg='black', font=('helvetica', size_xs), bg = color_set[1])
+        self.Label_macro_BF=tk.Label(self,  text="Don't type any input\nfor auto-exposure", fg='black', font=('helvetica', size_xs), bg = color_set[1])
         self.Label_macro_BF.place(x=2225/scaling_factor, y=(Y0+56)/scaling_factor, anchor = 'n')
         
         
         X0=1650
         Y0=510
         step=100
-        self.BF100x = IntVar()
+        self.BF100x = tk.IntVar()
         
         shift=320
         
         #Dark field
-        lw7 = Label(self,  text="Step 2: 100x and DF", fg='black', font=('helvetica', size_l), bg = color_set[0])
+        lw7 = tk.Label(self,  text="Step 2: 100x and DF", fg='black', font=('helvetica', size_l), bg = color_set[0])
         lw7.place(x=1630/scaling_factor, y=610/scaling_factor, anchor = 'nw')
         
         X0=1610
         Y0=860
         step=100
-        self.BF100x = IntVar()
-        self.DF50x = IntVar()
-        self.DF100x = IntVar()
-        Checkbutton(self, 
+        self.BF100x = tk.IntVar()
+        self.DF50x = tk.IntVar()
+        self.DF100x = tk.IntVar()
+        tk.Checkbutton(self, 
               indicatoron = 0,
               text="BF100x",
               selectcolor = color_set[2],
@@ -301,7 +294,7 @@ class Root(tk.Tk):
               width=6,
               font=('helvetica', size_s),
               variable=self.BF100x).place(x=(X0)/scaling_factor,y=(Y0)/scaling_factor,anchor='w')
-        Checkbutton(self, 
+        tk.Checkbutton(self, 
               indicatoron = 0,
               text="DF50x",
               selectcolor = color_set[2],
@@ -309,7 +302,7 @@ class Root(tk.Tk):
               width=6,
               font=('helvetica', size_s),
               variable=self.DF50x).place(x=(X0+0*step)/scaling_factor,y=(Y0+step)/scaling_factor,anchor='w')
-        Checkbutton(self, 
+        tk.Checkbutton(self, 
               indicatoron = 0,
               text="DF100x",
               selectcolor = color_set[2],
@@ -319,7 +312,7 @@ class Root(tk.Tk):
               variable=self.DF100x).place(x=(X0)/scaling_factor,y=(Y0+2*step)/scaling_factor,anchor='w')
         
         shift=260
-        lw71 = Label(self,  text="Exp (ms)", fg='black', font=('helvetica', size_xs), bg = color_set[0])
+        lw71 = tk.Label(self,  text="Exp (ms)", fg='black', font=('helvetica', size_xs), bg = color_set[0])
         lw71.place(x=(X0+shift)/scaling_factor, y=(Y0-100)/scaling_factor, anchor = 'n')
         
         self.entry_exposure_BF_100 = tk.Entry(self,width=4,font=('helvetica', size_s)) 
@@ -334,7 +327,7 @@ class Root(tk.Tk):
         self.entry_exposure_DF_100.place(x=(X0+shift)/scaling_factor, y=(Y0+2*step)/scaling_factor, anchor='center')
         
         shift=380
-        lw71 = Label(self,  text="Gain", fg='black', font=('helvetica', size_xs), bg = color_set[0])
+        lw71 = tk.Label(self,  text="Gain", fg='black', font=('helvetica', size_xs), bg = color_set[0])
         lw71.place(x=(X0+shift)/scaling_factor, y=(Y0-100)/scaling_factor, anchor = 'n')
         
         self.entry_gain_BF_100 = tk.Entry(self,width=2,font=('helvetica', size_s)) 
@@ -351,10 +344,10 @@ class Root(tk.Tk):
         self.button_DF = ttk.Button(self, text = " Create Macro ",command = self.createDFmacro)
         self.button_DF.place(x=2150/scaling_factor,y=(Y0+0/2)/scaling_factor,anchor='w')
         
-        frame_DF=Frame(self,height=100/scaling_factor,width=320/scaling_factor,bg=color_set[1])
+        frame_DF=tk.Frame(self,height=100/scaling_factor,width=320/scaling_factor,bg=color_set[1])
         frame_DF.place(x=2070/scaling_factor,y=(Y0+50)/scaling_factor,anchor='nw')
         
-        self.Label_macro_DF=Label(self,  text="Don't type any input\nfor auto-exposure", fg='black', font=('helvetica', size_xs), bg = color_set[1])
+        self.Label_macro_DF=tk.Label(self,  text="Don't type any input\nfor auto-exposure", fg='black', font=('helvetica', size_xs), bg = color_set[1])
         self.Label_macro_DF.place(x=2225/scaling_factor, y=(Y0+56)/scaling_factor, anchor = 'n')
         
         self.button_combine = ttk.Button(self, text = "Post Processing",command = self.combine_picture)
@@ -363,7 +356,7 @@ class Root(tk.Tk):
         self.button_done = ttk.Button(self, text = "Free Space",command = self.LastStep)
         self.button_done.place(x=2132/scaling_factor,y=(Y0+330)/scaling_factor,anchor='c')
         
-        self.Label_report = Label(self, text="", fg='black', font=('helvetica', size_xs), bg = color_set[0])
+        self.Label_report = tk.Label(self, text="", fg='black', font=('helvetica', size_xs), bg = color_set[0])
         self.Label_report.place(x=1866/scaling_factor,y=(Y0+320+55)/scaling_factor,anchor='c')
         
         self.Login_popup()
@@ -555,7 +548,7 @@ class Root(tk.Tk):
         if len(Hunt_choices) > 0:
             X,Y,Ystep=850/scaling_factor,810/scaling_factor,85/scaling_factor
         
-            self.Optionmenu_hunt = OptionMenu(self, self.Var_hunt_material, *Hunt_choices, command = self.actualize_range)
+            self.Optionmenu_hunt = tk.OptionMenu(self, self.Var_hunt_material, *Hunt_choices, command = self.actualize_range)
             self.Optionmenu_hunt.config(font=('helvetica', size_s),width=14,bg = color_set[0])
             self.Optionmenu_hunt.place(x=X,y=Y,anchor='w')
             self.Var_hunt_material.set(Hunt_choices[0])
@@ -572,8 +565,8 @@ class Root(tk.Tk):
         D=np.genfromtxt(calib)
         thickness = D[:,0]
         rmin,rmax = int(thickness[0]),int(thickness[-1])
-        self.Entry_range_min.delete(0,END)
-        self.Entry_range_max.delete(0,END)
+        self.Entry_range_min.delete(0,tk.END)
+        self.Entry_range_max.delete(0,tk.END)
 
         self.Entry_range_min.insert(0,rmin)
         self.Entry_range_max.insert(0,rmax)
@@ -593,9 +586,9 @@ class Root(tk.Tk):
         
         Y+=100
         
-        self.Var_import_calibration = StringVar()
+        self.Var_import_calibration = tk.StringVar()
         Hunt_choices = set(os.listdir(f"{MAIN_FOLDER}/Materials/Default"))
-        self.Optionmenu_import = OptionMenu(self.window_import, self.Var_import_calibration, *Hunt_choices)
+        self.Optionmenu_import = tk.OptionMenu(self.window_import, self.Var_import_calibration, *Hunt_choices)
         self.Optionmenu_import.config(font=('helvetica', size_s),width=14,bg = color_set[0])
         self.Optionmenu_import.place(x=X/scaling_factor,y=Y/scaling_factor,anchor='w')
         
@@ -706,9 +699,6 @@ class Root(tk.Tk):
             print(e)
         
         self.check_epoch()
-        
-        #overal score in %
-        #false negative in %
         
     def check_epoch(self):
         try:
@@ -920,7 +910,7 @@ class Root(tk.Tk):
         
     
     def button_nosepiece(self,text,value,posX,posY):
-         Radiobutton(self, 
+         tk.Radiobutton(self, 
               indicatoron = 0,
               text=text,
               selectcolor = color_set[2],
@@ -1341,10 +1331,10 @@ class Root(tk.Tk):
             for names in self.list_name :
                 self.dict_keep_remove[names] = 0
             
-            self.progress=Label(self.window_selection,  text=str(self.indice_flake+1)+" / "+str(self.indice_max), fg='black', font=('helvetica', size_s), bg = color_set[0])
-            self.progress.place(x=50/scaling_factor, y=50/scaling_factor, anchor = 'w')
+            self.progress=tk.Label(self.window_selection,  text=str(self.indice_flake+1)+" / "+str(self.indice_max), fg='black', font=('helvetica', size_s), bg = color_set[0])
+            self.progress.tk.place(x=50/scaling_factor, y=50/scaling_factor, anchor = 'w')
             
-            self.label_name=Label(self.window_selection,  text=str(self.list_name[self.indice_flake].split("/")[-1]), fg='black', font=('helvetica', size_s), bg = color_set[0])
+            self.label_name=tk.Label(self.window_selection,  text=str(self.list_name[self.indice_flake].split("/")[-1]), fg='black', font=('helvetica', size_s), bg = color_set[0])
             self.label_name.place(x=self.width_window_selection/2/scaling_factor, y=50/scaling_factor, anchor = 'center')
             
             self.showFlake()
