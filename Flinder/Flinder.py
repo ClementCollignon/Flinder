@@ -42,7 +42,6 @@ text_color='#312820'
 
 Window_size=[2400,1270]
 
-
 class Root(tk.Tk):
     """The main GUI.
     """ 
@@ -205,7 +204,7 @@ class Root(tk.Tk):
         Label_flake_hunt = tk.Label(self,  text="Flake Hunt", fg='black', font=('helvetica', size_l), bg = color_set[0])
         Label_flake_hunt.place(x=X, y=Y, anchor = 'nw')
         
-        X,Y,Ystep=850/scaling_factor,810/scaling_factor,85/scaling_factor
+        X,Y=850/scaling_factor,810/scaling_factor
         
         self.Var_hunt_material = tk.StringVar()
     
@@ -961,7 +960,6 @@ class Root(tk.Tk):
         return variable, entry_size
     
     def workingfolderDialog(self):
-        
         self.filename = filedialog.askdirectory(initialdir =  "", title = "Select A Folder")
         text=functions.long_path_cutter(self.filename)
         self.Label_path.configure(text = text, justify="left")
@@ -1851,9 +1849,7 @@ class Root(tk.Tk):
                 if hasattr(self,"label_molo"):
                     self.label_molo.destroy()
                     
-            if msg[0] == 3:                
-                X0=1350
-                Y0=380                
+            if msg[0] == 3:                    
                 self.Label_image.configure(text = msg[1])                
                 self.stitching_running=0
 
@@ -1875,7 +1871,6 @@ class Root(tk.Tk):
         try:
             msg = self.queue_stitch_multi.get(0)
             self.stitch_counter+=1
-#            self.waiting_for_next_stitch=1
             
             if self.stitch_counter<self.Nwafer:
                 self.queue_stitch = queue.Queue()
@@ -1886,7 +1881,6 @@ class Root(tk.Tk):
                 self.stitching_running=0
                 self.stitch_counter=0
                 self.queue_load = queue.Queue()
-#                self.after(100, self.process_queue_load)
                 self.process_queue_load()
                 Stitcher.ThreadedLoader(self.queue_load,self.filename,scaling_factor,self.Nwafer).start()
 
@@ -1932,7 +1926,6 @@ class Root(tk.Tk):
                 self.Hunt_one(self.hunt_counter,self.factor)
             
             else:
-#                self.remove_double()
                 self.hunt_running=0
                 self.hunt_counter=0
                 
