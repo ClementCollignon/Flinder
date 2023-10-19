@@ -1,4 +1,4 @@
-main_folder	C:\Users\LAB-nanooptomechanic\Documents\Param\Flinder_v13
+main_folder	"yourfolder"
 screen_scaling	2
 zeros	4
 FoV	2.7648	1.9661

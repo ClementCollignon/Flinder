@@ -15,6 +15,7 @@ I am working on a second version based on pymmCore and micromanager that will ci
   - [Installation](#installation)
 - [Step by Step Guide](#step-by-step-guide)
   - [Create a User Profile](#create-a-user-profile)
+  - [Import Calibration](import-calibration)
   - [Information about the scan](#information-about-the-scan)
   - [Stitching and Hunting](#stitching-and-hunting)
   - [Select the Best Flakes](#select-the-best-flakes)
@@ -99,11 +100,22 @@ conda create -n flinder_env tensorflow==2.9.0 python==3.8.10
 
 ### Create a User Profile
 
+The first thing that will be asked when you start the graphical interface is your username.
+If you don't have one yet or want to create a new one for a new project, simply enter your new username and click on "New User."
+This will enable you to have your own neural network and a database to train it.
+Indeed, the perception of what constitutes a good flake varies depending on the user and the project.
+
 <p align = "center">
 <img src="images/Create_user.PNG" width=900>
 </p>
 
-### Information about the scan
+### Import Calibration
+
+At this point, you might want to import a calibration.
+By default, only hBN calibration will be added to your profile.
+
+
+### Information about the Scan
 
 ### Stitching and Hunting
 
