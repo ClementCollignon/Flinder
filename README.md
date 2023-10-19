@@ -61,6 +61,17 @@ A brief summary of the process:
 
 ### Prerequisites
 
+The code has been tested with the following packages:
+- Nikon NIS element 
+- Python 3.8
+- TensorFlow 2.9
+- Tkinter 0.1
+- NumPy 1.18
+- MatPlotLib 3.4
+- OpenCV 4.0
+- Pillow 10.0
+- fpdf 1.7
+
 ### Installation
 
 ## Step by Step Guide
