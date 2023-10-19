@@ -112,9 +112,9 @@ Indeed, the perception of what constitutes a good flake varies depending on the 
 ### Import Calibration
 
 At this point, you might want to import a calibration.
-By default, only hBN calibration will be added to your profile.
-Click on "Import Calibration" in the middle panel, a pop-up window will appear.
-Select the calibration you wish to import and click "OK".
+By default, only the hBN calibration will be added to your profile.
+Click on "Import Calibration" in the middle panel, and a pop-up window will appear.
+Select the calibration you wish to import and click "OK."
 
 <p align = "center">
 <img src="images/Import_calibration.PNG" width=900>
