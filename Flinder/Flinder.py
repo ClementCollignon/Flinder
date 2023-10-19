@@ -57,17 +57,78 @@ class Root(tk.Tk):
         
         self.setup_useful_variables()
         self.setup_running_threads_indicators()
-        self.split_main_window()
-        self.setup_working_folder_panel()
-        
 
+        #split window in 3 panels
+        self.split_main_window()
+
+        #setup the leftmost panel
+        self.setup_working_folder_panel()
+        self.setup_scan_panel()
+        self.setup_nosepiece_panel()
+        self.setup_macro_panel()
+
+        #setup the middle panel
+        self.setup_stitching_panel()
+        self.setup_hunt_panel()
+
+        #setup right panel
+        self.setup_select_flakes_panel()
+        self.setup_50x_panel()
+        self.setup_BFDF_100x_panel()
+        self.setup_postprocess_freespace_panel()
+        
+        self.Login_popup()
+    
+    def setup_useful_variables(self):
+        self.nosepieces=["5x","10x","20x","50x","100x"]
+        self.overlap = OVERLAP
+        self.Fieldvalues=[FOV[0]*(1-self.overlap),FOV[1]*(1-self.overlap)]
+        
+        self.factors=[1,2,4,10,20]
+        self.step_focus = [3,4,5,6,7]
+        
+        self.zaxis=[(2,0.5,10),(2,0.5,0.1),(1,0.25,0.05),(1,0.25,0.05),(0.5,0.1,0.01)]
+        self.zaxis_step=[10,10,30]
+    
+    def setup_running_threads_indicators(self):
+        self.stitching_running = False
+        self.hunting_running = False
+        self.stitch_counter = 0
+        self.hunt_counter = 0
+    
+    def split_main_window(self):
+        #Create two vertical lines to separate the window in 3 pannels
+        Vertical_ligne1=tk.Frame(self,height=Window_size[1]/scaling_factor,width=2,bg=color_set[1])
+        Vertical_ligne1.place(x=799/scaling_factor,y=0)
+
+        Vertical_ligne2=tk.Frame(self,height=Window_size[1]/scaling_factor,width=2,bg=color_set[1])
+        Vertical_ligne2.place(x=1599/scaling_factor,y=0)
+
+    def setup_working_folder_panel(self):
+        #Define the working folder
+        X,Y=30/scaling_factor,10/scaling_factor
+        Label_working_folder = tk.Label(self,  text="Working Folder", fg='black', font=('helvetica', size_l), bg = color_set[0])
+        Label_working_folder.place(x=X, y=Y, anchor = 'nw')
+        
+        X,Y,height,width=195/scaling_factor,Y+120/scaling_factor,170/scaling_factor,590/scaling_factor
+        Frame_path_working_folder=tk.Frame(self,height=height,width=width,bg=color_set[1])
+        Frame_path_working_folder.place(x=X,y=Y,anchor='nw')
+        
+        X,Y=200/scaling_factor,Y+5/scaling_factor
+        self.Label_path = tk.Label(self,  text="Path: ", fg='black', font=('helvetica', size_xs), bg = color_set[1])
+        self.Label_path.place(x=X, y=Y, anchor = 'nw')
+        
+        X,Y=30/scaling_factor,Y-5/scaling_factor
+        Button_browse = ttk.Button(self, text = "Browse",command = self.workingfolderDialog)
+        Button_browse.place(x=X,y=Y,anchor='nw')
+
+    def setup_scan_panel(self):
         #Scanning size text and entry
         posX,posY=30/scaling_factor,320/scaling_factor
         Label_scanning_size = tk.Label(self, text= 'Position and size', fg='black', font=('helvetica', size_l), bg = color_set[0])
         Label_scanning_size.place(x=posX, y=posY, anchor = 'nw')
         
         posX,posY=40/scaling_factor,480/scaling_factor
-        stepY=100/scaling_factor
         
         Label_numberofwafers = tk.Label(self, text= "Number of Wafers", fg='black', font=('helvetica', size_s), bg = color_set[0])
         Label_numberofwafers.place(x=posX, y=posY, anchor='w')
@@ -89,9 +150,8 @@ class Root(tk.Tk):
         self.var_auto_hunt = tk.IntVar()
         self.button_auto_hunt = tk.Checkbutton(self, text='Auto Hunt',variable=self.var_auto_hunt, onvalue=1, offvalue=0, bg = color_set[0],font=('helvetica', size_s))
         self.button_auto_hunt.place(x=X, y=Y, anchor = 'nw')
-        
-        
-        
+
+    def setup_nosepiece_panel(self):
         #Eyepiece Magnification text and button
         X,Y=30/scaling_factor,780/scaling_factor
         X0=50/scaling_factor
@@ -106,7 +166,7 @@ class Root(tk.Tk):
         for i in range(len(text)):
             self.button_nosepiece(text[i],i+1,X+X0+i*stepX,Y+Y0)
 
-        
+    def setup_macro_panel(self):
         #Create the scanning macro
         X,Y=30/scaling_factor,1050/scaling_factor
         Label_create_macro = tk.Label(self,  text="Create Macro", fg='black', font=('helvetica', size_l), bg = color_set[0])
@@ -123,7 +183,8 @@ class Root(tk.Tk):
         X,Y=30/scaling_factor,1170/scaling_factor
         Button_macro = ttk.Button(self, text = "GO",command = self.checkEverything)
         Button_macro.place(x=X,y=Y,anchor='nw')
-        
+    
+    def setup_stitching_panel(self):
         #Image stitching pannel
         X,Y=830/scaling_factor, 10/scaling_factor
         Label_stitch = tk.Label(self,  text="Stitch Image", fg='black', font=('helvetica', size_l), bg = color_set[0])
@@ -139,7 +200,7 @@ class Root(tk.Tk):
         Button_stitch = ttk.Button(self, text = "Stitch",command = self.stitchImage_popup)
         Button_stitch.place(x=X,y=Y,anchor='center')
     
-        #Flake Hunt
+    def setup_hunt_panel(self):
         X,Y=830/scaling_factor,650/scaling_factor
         Label_flake_hunt = tk.Label(self,  text="Flake Hunt", fg='black', font=('helvetica', size_l), bg = color_set[0])
         Label_flake_hunt.place(x=X, y=Y, anchor = 'nw')
@@ -148,7 +209,6 @@ class Root(tk.Tk):
         
         self.Var_hunt_material = tk.StringVar()
     
-        # Hunt_choices = set(os.listdir("Materials"))
         Hunt_choices = [""]
         
         self.Optionmenu_hunt = tk.OptionMenu(self, self.Var_hunt_material, *Hunt_choices, command = self.actualize_range)
@@ -201,7 +261,8 @@ class Root(tk.Tk):
         
         self.label_hunt = tk.Label(self,  text="", fg='black', font=('helvetica', int(size_xs/1)), bg = color_set[1],justify='left')
         self.label_hunt.place(x=X+150/scaling_factor, y=Y, anchor = 'nw')
-        
+
+    def setup_select_flakes_panel(self):
         #Select flakes
         lw5 = tk.Label(self,  text="Select Flakes", fg='black', font=('helvetica', size_l), bg = color_set[0])
         lw5.place(x=1630/scaling_factor, y=10/scaling_factor, anchor = 'nw')
@@ -214,9 +275,8 @@ class Root(tk.Tk):
         
         self.button_select = ttk.Button(self, text = "Select",command = self.doSelection)
         self.button_select.place(x=1630/scaling_factor,y=150/scaling_factor,anchor='nw')
-        
-        
-        #Bright field 
+
+    def setup_50x_panel(self):
         lw6 = tk.Label(self,  text="Step 1: 50x scan", fg='black', font=('helvetica', size_l), bg = color_set[0])
         lw6.place(x=1630/scaling_factor, y=260/scaling_factor, anchor = 'nw')
         
@@ -236,8 +296,8 @@ class Root(tk.Tk):
         
         self.Label_macro_BF=tk.Label(self,  text="Don't type any input\nfor auto-exposure", fg='black', font=('helvetica', size_xs), bg = color_set[1])
         self.Label_macro_BF.place(x=2225/scaling_factor, y=(Y0+56)/scaling_factor, anchor = 'n')
-        
-        
+    
+    def setup_BFDF_100x_panel(self):
         X0=1650
         Y0=510
         step=100
@@ -245,7 +305,6 @@ class Root(tk.Tk):
         
         shift=320
         
-        #Dark field
         lw7 = tk.Label(self,  text="Step 2: 100x and DF", fg='black', font=('helvetica', size_l), bg = color_set[0])
         lw7.place(x=1630/scaling_factor, y=610/scaling_factor, anchor = 'nw')
         
@@ -318,60 +377,17 @@ class Root(tk.Tk):
         
         self.Label_macro_DF=tk.Label(self,  text="Don't type any input\nfor auto-exposure", fg='black', font=('helvetica', size_xs), bg = color_set[1])
         self.Label_macro_DF.place(x=2225/scaling_factor, y=(Y0+56)/scaling_factor, anchor = 'n')
-        
+
+    def setup_postprocess_freespace_panel(self):
+        Y0=1190
         self.button_combine = ttk.Button(self, text = "Post Processing",command = self.combine_picture)
-        self.button_combine.place(x=1866/scaling_factor,y=(Y0+330)/scaling_factor,anchor='c')
+        self.button_combine.place(x=1866/scaling_factor,y=(Y0)/scaling_factor,anchor='c')
         
         self.button_done = ttk.Button(self, text = "Free Space",command = self.LastStep)
-        self.button_done.place(x=2132/scaling_factor,y=(Y0+330)/scaling_factor,anchor='c')
+        self.button_done.place(x=2132/scaling_factor,y=(Y0)/scaling_factor,anchor='c')
         
         self.Label_report = tk.Label(self, text="", fg='black', font=('helvetica', size_xs), bg = color_set[0])
-        self.Label_report.place(x=1866/scaling_factor,y=(Y0+320+55)/scaling_factor,anchor='c')
-        
-        self.Login_popup()
-    
-    def setup_useful_variables(self):
-        self.nosepieces=["5x","10x","20x","50x","100x"]
-        self.overlap = OVERLAP
-        self.Fieldvalues=[FOV[0]*(1-self.overlap),FOV[1]*(1-self.overlap)]
-        
-        self.factors=[1,2,4,10,20]
-        self.step_focus = [3,4,5,6,7]
-        
-        self.zaxis=[(2,0.5,10),(2,0.5,0.1),(1,0.25,0.05),(1,0.25,0.05),(0.5,0.1,0.01)]
-        self.zaxis_step=[10,10,30]
-    
-    def setup_running_threads_indicators(self):
-        self.stitching_running = False
-        self.hunting_running = False
-        self.stitch_counter = 0
-        self.hunt_counter = 0
-    
-    def split_main_window(self):
-        #Create two vertical lines to separate the window in 3 pannels
-        Vertical_ligne1=tk.Frame(self,height=Window_size[1]/scaling_factor,width=2,bg=color_set[1])
-        Vertical_ligne1.place(x=799/scaling_factor,y=0)
-
-        Vertical_ligne2=tk.Frame(self,height=Window_size[1]/scaling_factor,width=2,bg=color_set[1])
-        Vertical_ligne2.place(x=1599/scaling_factor,y=0)
-
-    def setup_working_folder_panel(self):
-        #Define the working folder
-        X,Y=30/scaling_factor,10/scaling_factor
-        Label_working_folder = tk.Label(self,  text="Working Folder", fg='black', font=('helvetica', size_l), bg = color_set[0])
-        Label_working_folder.place(x=X, y=Y, anchor = 'nw')
-        
-        X,Y,height,width=195/scaling_factor,Y+120/scaling_factor,170/scaling_factor,590/scaling_factor
-        Frame_path_working_folder=tk.Frame(self,height=height,width=width,bg=color_set[1])
-        Frame_path_working_folder.place(x=X,y=Y,anchor='nw')
-        
-        X,Y=200/scaling_factor,Y+5/scaling_factor
-        self.Label_path = tk.Label(self,  text="Path: ", fg='black', font=('helvetica', size_xs), bg = color_set[1])
-        self.Label_path.place(x=X, y=Y, anchor = 'nw')
-        
-        X,Y=30/scaling_factor,Y-5/scaling_factor
-        Button_browse = ttk.Button(self, text = "Browse",command = self.workingfolderDialog)
-        Button_browse.place(x=X,y=Y,anchor='nw')
+        self.Label_report.place(x=1866/scaling_factor,y=(Y0+55)/scaling_factor,anchor='c')
 
     def on_closing_main(self):
         if hasattr(self, "trainer"):
@@ -534,8 +550,6 @@ class Root(tk.Tk):
         button_no = ttk.Button(self.window_overwrite, text="NO", command=self.window_overwrite.destroy)
         button_no.place(x=X/scaling_factor,y=Y/scaling_factor,anchor='s')
         
-        
-     
     def login(self,event = "e"):
         user = self.entry_user.get()
         known_users = os.listdir(f"{MAIN_FOLDER}/Materials")
@@ -544,7 +558,6 @@ class Root(tk.Tk):
             self.title(f"Flinder - {self.user}")
             self.load_calibration()
             
-    
     def on_closing_login(self):
         self.destroy()
 
@@ -569,7 +582,6 @@ class Root(tk.Tk):
         self.attributes('-topmost', True)
         self.attributes('-topmost', False)
 
-    
     def actualize_range(self,material):
         #material = self.Var_hunt_material.get()
         calib = f"{MAIN_FOLDER}/Materials/{self.user}/{material}/calibration.dat"
