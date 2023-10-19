@@ -74,6 +74,35 @@ The code has been tested with the following packages:
 
 ### Installation
 
+Tensorflow is always a bit tricky to install. I usually go with:
+
+```
+conda create -n flinder_env tensorflow-gpu==2.9.0 python==3.8.10 cudatoolkit=11.2
+conda activate flinder_env
+conda install -c anaconda numpy==1.18.5
+conda install -c conda-forge matplotlib==3.4.2
+pip install tkinter
+conda install -c conda-forge pillow==8.2.0
+conda install -c conda-forge opencv==4.0.1
+conda install -c anaconda spyder = 4.2.5
+conda install -c conda-forge fpdf==1.7.2
+```
+
+If you don't have GPU:
+
+```
+conda create -n flinder_env tensorflow==2.9.0 python==3.8.10  
+conda activate flinder_env  
+conda install -c anaconda numpy==1.18.5  
+conda install -c conda-forge matplotlib==3.4.2  
+pip install tkinter  
+conda install -c conda-forge pillow==8.2.0  
+conda install -c conda-forge opencv==4.0.1  
+conda install -c anaconda spyder = 4.2.5  
+conda install -c conda-forge fpdf==1.7.2  
+```
+
+
 ## Step by Step Guide
 
 ### Create a User Profile
