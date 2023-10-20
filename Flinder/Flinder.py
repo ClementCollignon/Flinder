@@ -4,6 +4,7 @@ from tkinter import filedialog
 
 import os
 import sys
+from gui_objects import GuiConstants
 
 import functions
 import Stitcher
@@ -29,30 +30,20 @@ import shutil
  LOW_RES, HIGH_RES, CCD,
  OFFSET_X, OFFSET_Y, OFFSET_Z) = functions.get_config()
 
-scaling_factor = float(SCREEN_SCALING)
-police_factor = scaling_factor
-
-size_l=int(28/scaling_factor*police_factor)
-size_s=int(18/scaling_factor*police_factor)
-size_xs=int(12/scaling_factor*police_factor)
-
-color_error="#EC7063"
-color_set=['#e3e4e7','#ffffff','#d9d9d9']
-text_color='#312820'
-
-Window_size=[2400,1270]
-
 class Root(tk.Tk):
     """The main GUI.
     """ 
     def __init__(self):
         super(Root, self).__init__()
+        self.gui_const = GuiConstants("config.txt")
+
         self.title("Flinder")
         self.protocol("WM_DELETE_WINDOW", self.on_closing_main)
         
-        self.minsize(int(Window_size[0]/scaling_factor), int(Window_size[1]/scaling_factor))
+        self.minsize(self.gui_const.window_size[0],self.gui_const.window_size[1])
+
         self.wm_iconbitmap('icon.ico')
-        self.configure(bg=color_set[0])
+        self.configure(bg=self.gui_const.color_set[0])
         
         self.setup_useful_variables()
         self.setup_running_threads_indicators()
@@ -97,67 +88,67 @@ class Root(tk.Tk):
     
     def split_main_window(self):
         #Create two vertical lines to separate the window in 3 pannels
-        Vertical_ligne1=tk.Frame(self,height=Window_size[1]/scaling_factor,width=2,bg=color_set[1])
-        Vertical_ligne1.place(x=799/scaling_factor,y=0)
+        Vertical_ligne1=tk.Frame(self,height=self.gui_const.window_size[1],width=2,bg=self.gui_const.color_set[1])
+        Vertical_ligne1.place(x=799/self.gui_const.screen_scaling,y=0)
 
-        Vertical_ligne2=tk.Frame(self,height=Window_size[1]/scaling_factor,width=2,bg=color_set[1])
-        Vertical_ligne2.place(x=1599/scaling_factor,y=0)
+        Vertical_ligne2=tk.Frame(self,height=self.gui_const.window_size[1],width=2,bg=self.gui_const.color_set[1])
+        Vertical_ligne2.place(x=1599/self.gui_const.screen_scaling,y=0)
 
     def setup_working_folder_panel(self):
         #Define the working folder
-        X,Y=30/scaling_factor,10/scaling_factor
-        Label_working_folder = tk.Label(self,  text="Working Folder", fg='black', font=('helvetica', size_l), bg = color_set[0])
+        X,Y=30/self.gui_const.screen_scaling,10/self.gui_const.screen_scaling
+        Label_working_folder = tk.Label(self,  text="Working Folder", fg='black', font=('helvetica', self.gui_const.police_sizes[0]), bg = self.gui_const.color_set[0])
         Label_working_folder.place(x=X, y=Y, anchor = 'nw')
         
-        X,Y,height,width=195/scaling_factor,Y+120/scaling_factor,170/scaling_factor,590/scaling_factor
-        Frame_path_working_folder=tk.Frame(self,height=height,width=width,bg=color_set[1])
+        X,Y,height,width=195/self.gui_const.screen_scaling,Y+120/self.gui_const.screen_scaling,170/self.gui_const.screen_scaling,590/self.gui_const.screen_scaling
+        Frame_path_working_folder=tk.Frame(self,height=height,width=width,bg=self.gui_const.color_set[1])
         Frame_path_working_folder.place(x=X,y=Y,anchor='nw')
         
-        X,Y=200/scaling_factor,Y+5/scaling_factor
-        self.Label_path = tk.Label(self,  text="Path: ", fg='black', font=('helvetica', size_xs), bg = color_set[1])
+        X,Y=200/self.gui_const.screen_scaling,Y+5/self.gui_const.screen_scaling
+        self.Label_path = tk.Label(self,  text="Path: ", fg='black', font=('helvetica', self.gui_const.police_sizes[2]), bg = self.gui_const.color_set[1])
         self.Label_path.place(x=X, y=Y, anchor = 'nw')
         
-        X,Y=30/scaling_factor,Y-5/scaling_factor
+        X,Y=30/self.gui_const.screen_scaling,Y-5/self.gui_const.screen_scaling
         Button_browse = ttk.Button(self, text = "Browse",command = self.workingfolderDialog)
         Button_browse.place(x=X,y=Y,anchor='nw')
 
     def setup_scan_panel(self):
         #Scanning size text and entry
-        posX,posY=30/scaling_factor,320/scaling_factor
-        Label_scanning_size = tk.Label(self, text= 'Position and size', fg='black', font=('helvetica', size_l), bg = color_set[0])
+        posX,posY=30/self.gui_const.screen_scaling,320/self.gui_const.screen_scaling
+        Label_scanning_size = tk.Label(self, text= 'Position and size', fg='black', font=('helvetica', self.gui_const.police_sizes[0]), bg = self.gui_const.color_set[0])
         Label_scanning_size.place(x=posX, y=posY, anchor = 'nw')
         
-        posX,posY=40/scaling_factor,480/scaling_factor
+        posX,posY=40/self.gui_const.screen_scaling,480/self.gui_const.screen_scaling
         
-        Label_numberofwafers = tk.Label(self, text= "Number of Wafers", fg='black', font=('helvetica', size_s), bg = color_set[0])
+        Label_numberofwafers = tk.Label(self, text= "Number of Wafers", fg='black', font=('helvetica', self.gui_const.police_sizes[1]), bg = self.gui_const.color_set[0])
         Label_numberofwafers.place(x=posX, y=posY, anchor='w')
         
-        Offset=430/scaling_factor
-        self.entry_numberofwafers = tk.Entry(self,width=3,font=('helvetica', size_s)) 
+        Offset=430/self.gui_const.screen_scaling
+        self.entry_numberofwafers = tk.Entry(self,width=3,font=('helvetica', self.gui_const.police_sizes[1])) 
         self.entry_numberofwafers.place(x=posX+Offset, y=posY, anchor='w')
         
-        X,Y=400/scaling_factor,570/scaling_factor
+        X,Y=400/self.gui_const.screen_scaling,570/self.gui_const.screen_scaling
         Button_setup = ttk.Button(self, text = " Enter position and size ",command = self.position_size_popup)
         Button_setup.place(x=X,y=Y,anchor='center')
         
-        X,Y=40/scaling_factor,650/scaling_factor
+        X,Y=40/self.gui_const.screen_scaling,650/self.gui_const.screen_scaling
         self.var_auto_stitch = tk.IntVar()
-        self.button_auto_stitch = tk.Checkbutton(self, text='Auto Stitch',variable=self.var_auto_stitch, onvalue=1, offvalue=0, bg = color_set[0],font=('helvetica', size_s))
+        self.button_auto_stitch = tk.Checkbutton(self, text='Auto Stitch',variable=self.var_auto_stitch, onvalue=1, offvalue=0, bg = self.gui_const.color_set[0],font=('helvetica', self.gui_const.police_sizes[1]))
         self.button_auto_stitch.place(x=X, y=Y, anchor = 'nw')
         
-        X,Y=X+400/scaling_factor,Y
+        X,Y=X+400/self.gui_const.screen_scaling,Y
         self.var_auto_hunt = tk.IntVar()
-        self.button_auto_hunt = tk.Checkbutton(self, text='Auto Hunt',variable=self.var_auto_hunt, onvalue=1, offvalue=0, bg = color_set[0],font=('helvetica', size_s))
+        self.button_auto_hunt = tk.Checkbutton(self, text='Auto Hunt',variable=self.var_auto_hunt, onvalue=1, offvalue=0, bg = self.gui_const.color_set[0],font=('helvetica', self.gui_const.police_sizes[1]))
         self.button_auto_hunt.place(x=X, y=Y, anchor = 'nw')
 
     def setup_nosepiece_panel(self):
         #Eyepiece Magnification text and button
-        X,Y=30/scaling_factor,780/scaling_factor
-        X0=50/scaling_factor
-        Y0=160/scaling_factor
-        stepX=130/scaling_factor
+        X,Y=30/self.gui_const.screen_scaling,780/self.gui_const.screen_scaling
+        X0=50/self.gui_const.screen_scaling
+        Y0=160/self.gui_const.screen_scaling
+        stepX=130/self.gui_const.screen_scaling
         
-        Label_nosepiece = tk.Label(self, text= 'Nosepiece', fg='black', font=('helvetica', size_l), bg = color_set[0])
+        Label_nosepiece = tk.Label(self, text= 'Nosepiece', fg='black', font=('helvetica', self.gui_const.police_sizes[0]), bg = self.gui_const.color_set[0])
         Label_nosepiece.place(x=X, y=Y, anchor = 'nw')
         
         self.nosepiece_selected = tk.IntVar()
@@ -167,134 +158,134 @@ class Root(tk.Tk):
 
     def setup_macro_panel(self):
         #Create the scanning macro
-        X,Y=30/scaling_factor,1050/scaling_factor
-        Label_create_macro = tk.Label(self,  text="Create Macro", fg='black', font=('helvetica', size_l), bg = color_set[0])
+        X,Y=30/self.gui_const.screen_scaling,1050/self.gui_const.screen_scaling
+        Label_create_macro = tk.Label(self,  text="Create Macro", fg='black', font=('helvetica', self.gui_const.police_sizes[0]), bg = self.gui_const.color_set[0])
         Label_create_macro.place(x=X, y=Y, anchor = 'nw')
         
-        X,Y,height,width=195/scaling_factor,1165/scaling_factor,55/scaling_factor,590/scaling_factor
-        Frame_path_create_macro=tk.Frame(self,height=height,width=width,bg=color_set[1])
+        X,Y,height,width=195/self.gui_const.screen_scaling,1165/self.gui_const.screen_scaling,55/self.gui_const.screen_scaling,590/self.gui_const.screen_scaling
+        Frame_path_create_macro=tk.Frame(self,height=height,width=width,bg=self.gui_const.color_set[1])
         Frame_path_create_macro.place(x=X,y=Y,anchor='nw')
         
-        X,Y=480/scaling_factor,1192/scaling_factor
-        self.Label_macro = tk.Label(self,  text="Waiting for the Go...", fg='black', font=('helvetica', size_xs), bg = color_set[1])
+        X,Y=480/self.gui_const.screen_scaling,1192/self.gui_const.screen_scaling
+        self.Label_macro = tk.Label(self,  text="Waiting for the Go...", fg='black', font=('helvetica', self.gui_const.police_sizes[2]), bg = self.gui_const.color_set[1])
         self.Label_macro.place(x=X, y=Y, anchor = 'center')
         
-        X,Y=30/scaling_factor,1170/scaling_factor
+        X,Y=30/self.gui_const.screen_scaling,1170/self.gui_const.screen_scaling
         Button_macro = ttk.Button(self, text = "GO",command = self.checkEverything)
         Button_macro.place(x=X,y=Y,anchor='nw')
     
     def setup_stitching_panel(self):
         #Image stitching pannel
-        X,Y=830/scaling_factor, 10/scaling_factor
-        Label_stitch = tk.Label(self,  text="Stitch Image", fg='black', font=('helvetica', size_l), bg = color_set[0])
+        X,Y=830/self.gui_const.screen_scaling, 10/self.gui_const.screen_scaling
+        Label_stitch = tk.Label(self,  text="Stitch Image", fg='black', font=('helvetica', self.gui_const.police_sizes[0]), bg = self.gui_const.color_set[0])
         Label_stitch.place(x=X, y=Y, anchor = 'nw')
         
-        X,Y,height,width=1350/scaling_factor, 380/scaling_factor,480/scaling_factor,480/scaling_factor
-        Frame_stitched_image=tk.Frame(self,height=height,width=width,bg=color_set[1])
+        X,Y,height,width=1350/self.gui_const.screen_scaling, 380/self.gui_const.screen_scaling,480/self.gui_const.screen_scaling,480/self.gui_const.screen_scaling
+        Frame_stitched_image=tk.Frame(self,height=height,width=width,bg=self.gui_const.color_set[1])
         Frame_stitched_image.place(x=X,y=Y,anchor='center')
-        self.Label_image = tk.Label(self,  text="No Image\nto Display", fg='black', font=('helvetica', size_xs), bg = color_set[1])
+        self.Label_image = tk.Label(self,  text="No Image\nto Display", fg='black', font=('helvetica', self.gui_const.police_sizes[2]), bg = self.gui_const.color_set[1])
         self.Label_image.place(x=X, y=Y, anchor = 'center')
         
-        X=950/scaling_factor
+        X=950/self.gui_const.screen_scaling
         Button_stitch = ttk.Button(self, text = "Stitch",command = self.stitchImage_popup)
         Button_stitch.place(x=X,y=Y,anchor='center')
     
     def setup_hunt_panel(self):
-        X,Y=830/scaling_factor,650/scaling_factor
-        Label_flake_hunt = tk.Label(self,  text="Flake Hunt", fg='black', font=('helvetica', size_l), bg = color_set[0])
+        X,Y=830/self.gui_const.screen_scaling,650/self.gui_const.screen_scaling
+        Label_flake_hunt = tk.Label(self,  text="Flake Hunt", fg='black', font=('helvetica', self.gui_const.police_sizes[0]), bg = self.gui_const.color_set[0])
         Label_flake_hunt.place(x=X, y=Y, anchor = 'nw')
         
-        X,Y=850/scaling_factor,810/scaling_factor
+        X,Y=850/self.gui_const.screen_scaling,810/self.gui_const.screen_scaling
         
         self.Var_hunt_material = tk.StringVar()
     
         Hunt_choices = [""]
         
         self.Optionmenu_hunt = tk.OptionMenu(self, self.Var_hunt_material, *Hunt_choices, command = self.actualize_range)
-        self.Optionmenu_hunt.config(font=('helvetica', size_s),width=14,bg = color_set[0])
+        self.Optionmenu_hunt.config(font=('helvetica', self.gui_const.police_sizes[1]),width=14,bg = self.gui_const.color_set[0])
         self.Optionmenu_hunt.place(x=X,y=Y,anchor='w')
         
-        Offset=570/scaling_factor        
-        self.Entry_size = tk.Entry(self,width=6,font=('helvetica', size_s)) 
+        Offset=570/self.gui_const.screen_scaling        
+        self.Entry_size = tk.Entry(self,width=6,font=('helvetica', self.gui_const.police_sizes[1])) 
         self.Entry_size.place(x=X+Offset, y=Y, anchor='center')
         
-        OffsetX,OffsetY=570/scaling_factor,120/scaling_factor
-        Label_size = tk.Label(self,  text=u"Size ( \u03bc\u33A1 )", fg='black', font=('helvetica', size_s), bg = color_set[0])
+        OffsetX,OffsetY=570/self.gui_const.screen_scaling,120/self.gui_const.screen_scaling
+        Label_size = tk.Label(self,  text=u"Size ( \u03bc\u33A1 )", fg='black', font=('helvetica', self.gui_const.police_sizes[1]), bg = self.gui_const.color_set[0])
         Label_size.place(x=X+OffsetX, y=Y-OffsetY, anchor = 'n')
         
-        X,Y=1200/scaling_factor,1003/scaling_factor
-        Label_range = tk.Label(self,  text="Range", fg='black', font=('helvetica', size_s), bg = color_set[0])
+        X,Y=1200/self.gui_const.screen_scaling,1003/self.gui_const.screen_scaling
+        Label_range = tk.Label(self,  text="Range", fg='black', font=('helvetica', self.gui_const.police_sizes[1]), bg = self.gui_const.color_set[0])
         Label_range.place(x=X, y=Y, anchor = 'nw')
         
-        X+=170/scaling_factor
-        self.Entry_range_min = tk.Entry(self,width=3,font=('helvetica', size_s), justify="right") 
+        X+=170/self.gui_const.screen_scaling
+        self.Entry_range_min = tk.Entry(self,width=3,font=('helvetica', self.gui_const.police_sizes[1]), justify="right") 
         self.Entry_range_min.place(x=X, y=Y, anchor='nw')
         
-        X+=100/scaling_factor
-        self.Entry_range_max = tk.Entry(self,width=3,font=('helvetica', size_s), justify="right") 
+        X+=100/self.gui_const.screen_scaling
+        self.Entry_range_max = tk.Entry(self,width=3,font=('helvetica', self.gui_const.police_sizes[1]), justify="right") 
         self.Entry_range_max.place(x=X, y=Y, anchor='nw')
         
-        X,Y=1000/scaling_factor,910/scaling_factor
+        X,Y=1000/self.gui_const.screen_scaling,910/self.gui_const.screen_scaling
         self.button_train =  ttk.Button(self, text = "        Train        ",command = self.check_training)
         self.button_train.place(x=X,y=Y,anchor='nw')
         
-        X,Y=1250/scaling_factor,910/scaling_factor
+        X,Y=1250/self.gui_const.screen_scaling,910/self.gui_const.screen_scaling
         self.button_import = ttk.Button(self, text = " Import Calibration ",command = self.import_calibration)
         self.button_import.place(x=X,y=Y,anchor='nw')
         
-        X,Y=870/scaling_factor,1000/scaling_factor
+        X,Y=870/self.gui_const.screen_scaling,1000/self.gui_const.screen_scaling
         self.var_AI = tk.IntVar()
-        self.button_AI = tk.Checkbutton(self, text='Use AI',variable=self.var_AI, onvalue=1, offvalue=0, bg = color_set[0],font=('helvetica', size_s))
+        self.button_AI = tk.Checkbutton(self, text='Use AI',variable=self.var_AI, onvalue=1, offvalue=0, bg = self.gui_const.color_set[0],font=('helvetica', self.gui_const.police_sizes[1]))
         self.button_AI.place(x=X, y=Y, anchor = 'nw')
         
-        X,Y=830/scaling_factor,1135/scaling_factor
+        X,Y=830/self.gui_const.screen_scaling,1135/self.gui_const.screen_scaling
         Button_hunt = ttk.Button(self, text = "Hunt",command = self.Hunt)
         Button_hunt.place(x=X,y=Y,anchor='w')
         
-        X,Y,height,width=1000/scaling_factor,1105/scaling_factor,130/scaling_factor,585/scaling_factor
-        Frame_hunt=tk.Frame(self,height=height,width=width,bg=color_set[1])
+        X,Y,height,width=1000/self.gui_const.screen_scaling,1105/self.gui_const.screen_scaling,130/self.gui_const.screen_scaling,585/self.gui_const.screen_scaling
+        Frame_hunt=tk.Frame(self,height=height,width=width,bg=self.gui_const.color_set[1])
         Frame_hunt.place(x=X,y=Y,anchor='nw')
         
-        lw_hunt = tk.Label(self,  text="Progress:", fg='black', font=('helvetica', int(size_xs/1)), bg = color_set[1],justify='left')
+        lw_hunt = tk.Label(self,  text="Progress:", fg='black', font=('helvetica', int(self.gui_const.police_sizes[2]/1)), bg = self.gui_const.color_set[1],justify='left')
         lw_hunt.place(x=X, y=Y, anchor = 'nw')
         
-        self.label_hunt = tk.Label(self,  text="", fg='black', font=('helvetica', int(size_xs/1)), bg = color_set[1],justify='left')
-        self.label_hunt.place(x=X+150/scaling_factor, y=Y, anchor = 'nw')
+        self.label_hunt = tk.Label(self,  text="", fg='black', font=('helvetica', int(self.gui_const.police_sizes[2]/1)), bg = self.gui_const.color_set[1],justify='left')
+        self.label_hunt.place(x=X+150/self.gui_const.screen_scaling, y=Y, anchor = 'nw')
 
     def setup_select_flakes_panel(self):
         #Select flakes
-        lw5 = tk.Label(self,  text="Select Flakes", fg='black', font=('helvetica', size_l), bg = color_set[0])
-        lw5.place(x=1630/scaling_factor, y=10/scaling_factor, anchor = 'nw')
+        lw5 = tk.Label(self,  text="Select Flakes", fg='black', font=('helvetica', self.gui_const.police_sizes[0]), bg = self.gui_const.color_set[0])
+        lw5.place(x=1630/self.gui_const.screen_scaling, y=10/self.gui_const.screen_scaling, anchor = 'nw')
         
-        frame_path=tk.Frame(self,height=55/scaling_factor,width=590/scaling_factor,bg=color_set[1])
-        frame_path.place(x=(1600+195)/scaling_factor,y=150/scaling_factor,anchor='nw')
+        frame_path=tk.Frame(self,height=55/self.gui_const.screen_scaling,width=590/self.gui_const.screen_scaling,bg=self.gui_const.color_set[1])
+        frame_path.place(x=(1600+195)/self.gui_const.screen_scaling,y=150/self.gui_const.screen_scaling,anchor='nw')
         
-        self.label_select = tk.Label(self,  text="No selection done", fg='black', font=('helvetica', size_xs), bg = color_set[1])
-        self.label_select.place(x=(480+1600)/scaling_factor, y=175/scaling_factor, anchor = 'center')
+        self.label_select = tk.Label(self,  text="No selection done", fg='black', font=('helvetica', self.gui_const.police_sizes[2]), bg = self.gui_const.color_set[1])
+        self.label_select.place(x=(480+1600)/self.gui_const.screen_scaling, y=175/self.gui_const.screen_scaling, anchor = 'center')
         
         self.button_select = ttk.Button(self, text = "Select",command = self.doSelection)
-        self.button_select.place(x=1630/scaling_factor,y=150/scaling_factor,anchor='nw')
+        self.button_select.place(x=1630/self.gui_const.screen_scaling,y=150/self.gui_const.screen_scaling,anchor='nw')
 
     def setup_50x_panel(self):
-        lw6 = tk.Label(self,  text="Step 1: 50x scan", fg='black', font=('helvetica', size_l), bg = color_set[0])
-        lw6.place(x=1630/scaling_factor, y=260/scaling_factor, anchor = 'nw')
+        lw6 = tk.Label(self,  text="Step 1: 50x scan", fg='black', font=('helvetica', self.gui_const.police_sizes[0]), bg = self.gui_const.color_set[0])
+        lw6.place(x=1630/self.gui_const.screen_scaling, y=260/self.gui_const.screen_scaling, anchor = 'nw')
         
         X0,Y0=1650,410
-        lw61 = tk.Label(self,  text="Exposure:             ms", fg='black', font=('helvetica', size_s), bg = color_set[0])
-        lw61.place(x=(X0)/scaling_factor, y=(Y0)/scaling_factor, anchor = 'w')
+        lw61 = tk.Label(self,  text="Exposure:             ms", fg='black', font=('helvetica', self.gui_const.police_sizes[1]), bg = self.gui_const.color_set[0])
+        lw61.place(x=(X0)/self.gui_const.screen_scaling, y=(Y0)/self.gui_const.screen_scaling, anchor = 'w')
         
         shift=250
-        self.entry_exposure_BF_50 = tk.Entry(self,width=4,font=('helvetica', size_s)) 
-        self.entry_exposure_BF_50.place(x=(X0+shift)/scaling_factor, y=Y0/scaling_factor, anchor='w')
+        self.entry_exposure_BF_50 = tk.Entry(self,width=4,font=('helvetica', self.gui_const.police_sizes[1])) 
+        self.entry_exposure_BF_50.place(x=(X0+shift)/self.gui_const.screen_scaling, y=Y0/self.gui_const.screen_scaling, anchor='w')
         
-        frame_BF=tk.Frame(self,height=100/scaling_factor,width=320/scaling_factor,bg=color_set[1])
-        frame_BF.place(x=2070/scaling_factor,y=(Y0+50)/scaling_factor,anchor='nw')
+        frame_BF=tk.Frame(self,height=100/self.gui_const.screen_scaling,width=320/self.gui_const.screen_scaling,bg=self.gui_const.color_set[1])
+        frame_BF.place(x=2070/self.gui_const.screen_scaling,y=(Y0+50)/self.gui_const.screen_scaling,anchor='nw')
         
         self.button_BF = ttk.Button(self, text = " Create Macro ",command = self.create50xmacro)
-        self.button_BF.place(x=2150/scaling_factor,y=(Y0+0/2)/scaling_factor,anchor='w')
+        self.button_BF.place(x=2150/self.gui_const.screen_scaling,y=(Y0+0/2)/self.gui_const.screen_scaling,anchor='w')
         
-        self.Label_macro_BF=tk.Label(self,  text="Don't type any input\nfor auto-exposure", fg='black', font=('helvetica', size_xs), bg = color_set[1])
-        self.Label_macro_BF.place(x=2225/scaling_factor, y=(Y0+56)/scaling_factor, anchor = 'n')
+        self.Label_macro_BF=tk.Label(self,  text="Don't type any input\nfor auto-exposure", fg='black', font=('helvetica', self.gui_const.police_sizes[2]), bg = self.gui_const.color_set[1])
+        self.Label_macro_BF.place(x=2225/self.gui_const.screen_scaling, y=(Y0+56)/self.gui_const.screen_scaling, anchor = 'n')
     
     def setup_BFDF_100x_panel(self):
         X0=1650
@@ -304,8 +295,8 @@ class Root(tk.Tk):
         
         shift=320
         
-        lw7 = tk.Label(self,  text="Step 2: 100x and DF", fg='black', font=('helvetica', size_l), bg = color_set[0])
-        lw7.place(x=1630/scaling_factor, y=610/scaling_factor, anchor = 'nw')
+        lw7 = tk.Label(self,  text="Step 2: 100x and DF", fg='black', font=('helvetica', self.gui_const.police_sizes[0]), bg = self.gui_const.color_set[0])
+        lw7.place(x=1630/self.gui_const.screen_scaling, y=610/self.gui_const.screen_scaling, anchor = 'nw')
         
         X0=1610
         Y0=860
@@ -316,77 +307,77 @@ class Root(tk.Tk):
         tk.Checkbutton(self, 
               indicatoron = 0,
               text="BF100x",
-              selectcolor = color_set[2],
-              bg = color_set[0],
+              selectcolor = self.gui_const.color_set[2],
+              bg = self.gui_const.color_set[0],
               width=6,
-              font=('helvetica', size_s),
-              variable=self.BF100x).place(x=(X0)/scaling_factor,y=(Y0)/scaling_factor,anchor='w')
+              font=('helvetica', self.gui_const.police_sizes[1]),
+              variable=self.BF100x).place(x=(X0)/self.gui_const.screen_scaling,y=(Y0)/self.gui_const.screen_scaling,anchor='w')
         tk.Checkbutton(self, 
               indicatoron = 0,
               text="DF50x",
-              selectcolor = color_set[2],
-              bg = color_set[0],
+              selectcolor = self.gui_const.color_set[2],
+              bg = self.gui_const.color_set[0],
               width=6,
-              font=('helvetica', size_s),
-              variable=self.DF50x).place(x=(X0+0*step)/scaling_factor,y=(Y0+step)/scaling_factor,anchor='w')
+              font=('helvetica', self.gui_const.police_sizes[1]),
+              variable=self.DF50x).place(x=(X0+0*step)/self.gui_const.screen_scaling,y=(Y0+step)/self.gui_const.screen_scaling,anchor='w')
         tk.Checkbutton(self, 
               indicatoron = 0,
               text="DF100x",
-              selectcolor = color_set[2],
-              bg = color_set[0],
+              selectcolor = self.gui_const.color_set[2],
+              bg = self.gui_const.color_set[0],
               width=6,
-              font=('helvetica', size_s),
-              variable=self.DF100x).place(x=(X0)/scaling_factor,y=(Y0+2*step)/scaling_factor,anchor='w')
+              font=('helvetica', self.gui_const.police_sizes[1]),
+              variable=self.DF100x).place(x=(X0)/self.gui_const.screen_scaling,y=(Y0+2*step)/self.gui_const.screen_scaling,anchor='w')
         
         shift=260
-        lw71 = tk.Label(self,  text="Exp (ms)", fg='black', font=('helvetica', size_xs), bg = color_set[0])
-        lw71.place(x=(X0+shift)/scaling_factor, y=(Y0-100)/scaling_factor, anchor = 'n')
+        lw71 = tk.Label(self,  text="Exp (ms)", fg='black', font=('helvetica', self.gui_const.police_sizes[2]), bg = self.gui_const.color_set[0])
+        lw71.place(x=(X0+shift)/self.gui_const.screen_scaling, y=(Y0-100)/self.gui_const.screen_scaling, anchor = 'n')
         
-        self.entry_exposure_BF_100 = tk.Entry(self,width=4,font=('helvetica', size_s)) 
-        self.entry_exposure_BF_100.place(x=(X0+shift)/scaling_factor, y=(Y0)/scaling_factor, anchor='center')
+        self.entry_exposure_BF_100 = tk.Entry(self,width=4,font=('helvetica', self.gui_const.police_sizes[1])) 
+        self.entry_exposure_BF_100.place(x=(X0+shift)/self.gui_const.screen_scaling, y=(Y0)/self.gui_const.screen_scaling, anchor='center')
     
-        self.entry_exposure_DF_50 = tk.Entry(self,width=4,font=('helvetica', size_s), justify="right") 
+        self.entry_exposure_DF_50 = tk.Entry(self,width=4,font=('helvetica', self.gui_const.police_sizes[1]), justify="right") 
         self.entry_exposure_DF_50.insert(0,2000)
-        self.entry_exposure_DF_50.place(x=(X0+shift)/scaling_factor, y=(Y0+step)/scaling_factor, anchor='center')
+        self.entry_exposure_DF_50.place(x=(X0+shift)/self.gui_const.screen_scaling, y=(Y0+step)/self.gui_const.screen_scaling, anchor='center')
 
-        self.entry_exposure_DF_100 = tk.Entry(self,width=4,font=('helvetica', size_s))
+        self.entry_exposure_DF_100 = tk.Entry(self,width=4,font=('helvetica', self.gui_const.police_sizes[1]))
         self.entry_exposure_DF_100.insert(0,3000)
-        self.entry_exposure_DF_100.place(x=(X0+shift)/scaling_factor, y=(Y0+2*step)/scaling_factor, anchor='center')
+        self.entry_exposure_DF_100.place(x=(X0+shift)/self.gui_const.screen_scaling, y=(Y0+2*step)/self.gui_const.screen_scaling, anchor='center')
         
         shift=380
-        lw71 = tk.Label(self,  text="Gain", fg='black', font=('helvetica', size_xs), bg = color_set[0])
-        lw71.place(x=(X0+shift)/scaling_factor, y=(Y0-100)/scaling_factor, anchor = 'n')
+        lw71 = tk.Label(self,  text="Gain", fg='black', font=('helvetica', self.gui_const.police_sizes[2]), bg = self.gui_const.color_set[0])
+        lw71.place(x=(X0+shift)/self.gui_const.screen_scaling, y=(Y0-100)/self.gui_const.screen_scaling, anchor = 'n')
         
-        self.entry_gain_BF_100 = tk.Entry(self,width=2,font=('helvetica', size_s)) 
-        self.entry_gain_BF_100.place(x=(X0+shift)/scaling_factor, y=(Y0)/scaling_factor, anchor='center')
+        self.entry_gain_BF_100 = tk.Entry(self,width=2,font=('helvetica', self.gui_const.police_sizes[1])) 
+        self.entry_gain_BF_100.place(x=(X0+shift)/self.gui_const.screen_scaling, y=(Y0)/self.gui_const.screen_scaling, anchor='center')
     
-        self.entry_gain_DF_50 = tk.Entry(self,width=2,font=('helvetica', size_s))
+        self.entry_gain_DF_50 = tk.Entry(self,width=2,font=('helvetica', self.gui_const.police_sizes[1]))
         self.entry_gain_DF_50.insert(0,15)
-        self.entry_gain_DF_50.place(x=(X0+shift)/scaling_factor, y=(Y0+step)/scaling_factor, anchor='center')
+        self.entry_gain_DF_50.place(x=(X0+shift)/self.gui_const.screen_scaling, y=(Y0+step)/self.gui_const.screen_scaling, anchor='center')
 
-        self.entry_gain_DF_100 = tk.Entry(self,width=2,font=('helvetica', size_s))
+        self.entry_gain_DF_100 = tk.Entry(self,width=2,font=('helvetica', self.gui_const.police_sizes[1]))
         self.entry_gain_DF_100.insert(0,20)
-        self.entry_gain_DF_100.place(x=(X0+shift)/scaling_factor, y=(Y0+2*step)/scaling_factor, anchor='center')
+        self.entry_gain_DF_100.place(x=(X0+shift)/self.gui_const.screen_scaling, y=(Y0+2*step)/self.gui_const.screen_scaling, anchor='center')
         
         self.button_DF = ttk.Button(self, text = " Create Macro ",command = self.createDFmacro)
-        self.button_DF.place(x=2150/scaling_factor,y=(Y0+0/2)/scaling_factor,anchor='w')
+        self.button_DF.place(x=2150/self.gui_const.screen_scaling,y=(Y0+0/2)/self.gui_const.screen_scaling,anchor='w')
         
-        frame_DF=tk.Frame(self,height=100/scaling_factor,width=320/scaling_factor,bg=color_set[1])
-        frame_DF.place(x=2070/scaling_factor,y=(Y0+50)/scaling_factor,anchor='nw')
+        frame_DF=tk.Frame(self,height=100/self.gui_const.screen_scaling,width=320/self.gui_const.screen_scaling,bg=self.gui_const.color_set[1])
+        frame_DF.place(x=2070/self.gui_const.screen_scaling,y=(Y0+50)/self.gui_const.screen_scaling,anchor='nw')
         
-        self.Label_macro_DF=tk.Label(self,  text="Don't type any input\nfor auto-exposure", fg='black', font=('helvetica', size_xs), bg = color_set[1])
-        self.Label_macro_DF.place(x=2225/scaling_factor, y=(Y0+56)/scaling_factor, anchor = 'n')
+        self.Label_macro_DF=tk.Label(self,  text="Don't type any input\nfor auto-exposure", fg='black', font=('helvetica', self.gui_const.police_sizes[2]), bg = self.gui_const.color_set[1])
+        self.Label_macro_DF.place(x=2225/self.gui_const.screen_scaling, y=(Y0+56)/self.gui_const.screen_scaling, anchor = 'n')
 
     def setup_postprocess_freespace_panel(self):
         Y0=1190
         self.button_combine = ttk.Button(self, text = "Post Processing",command = self.combine_picture)
-        self.button_combine.place(x=1866/scaling_factor,y=(Y0)/scaling_factor,anchor='c')
+        self.button_combine.place(x=1866/self.gui_const.screen_scaling,y=(Y0)/self.gui_const.screen_scaling,anchor='c')
         
         self.button_done = ttk.Button(self, text = "Free Space",command = self.LastStep)
-        self.button_done.place(x=2132/scaling_factor,y=(Y0)/scaling_factor,anchor='c')
+        self.button_done.place(x=2132/self.gui_const.screen_scaling,y=(Y0)/self.gui_const.screen_scaling,anchor='c')
         
-        self.Label_report = tk.Label(self, text="", fg='black', font=('helvetica', size_xs), bg = color_set[0])
-        self.Label_report.place(x=1866/scaling_factor,y=(Y0+55)/scaling_factor,anchor='c')
+        self.Label_report = tk.Label(self, text="", fg='black', font=('helvetica', self.gui_const.police_sizes[2]), bg = self.gui_const.color_set[0])
+        self.Label_report.place(x=1866/self.gui_const.screen_scaling,y=(Y0+55)/self.gui_const.screen_scaling,anchor='c')
 
     def on_closing_main(self):
         if hasattr(self, "trainer"):
@@ -397,9 +388,9 @@ class Root(tk.Tk):
         sys.exit()
     
     def Login_popup(self):
-        self.window_login = tk.Toplevel(bg=color_set[0],bd=2)
+        self.window_login = tk.Toplevel(bg=self.gui_const.color_set[0],bd=2)
         self.window_login.wm_iconbitmap('icon.ico')
-        self.window_login.geometry("%dx%d%+d%+d" % (int(600/scaling_factor), 250/scaling_factor, (2560/2)/scaling_factor, (1440/2)/scaling_factor))
+        self.window_login.geometry("%dx%d%+d%+d" % (int(600/self.gui_const.screen_scaling), 250/self.gui_const.screen_scaling, (2560/2)/self.gui_const.screen_scaling, (1440/2)/self.gui_const.screen_scaling))
             
         self.window_login.grab_set()
         
@@ -407,28 +398,28 @@ class Root(tk.Tk):
         
         X,Y = 50, 75
         text_user="User"
-        label = tk.Label(self.window_login, text=text_user,bg=color_set[0],font=('helvetica', size_s))
+        label = tk.Label(self.window_login, text=text_user,bg=self.gui_const.color_set[0],font=('helvetica', self.gui_const.police_sizes[1]))
         label.configure(justify="left")
-        label.place(x=X/scaling_factor,y=Y/scaling_factor,anchor='w')
+        label.place(x=X/self.gui_const.screen_scaling,y=Y/self.gui_const.screen_scaling,anchor='w')
         
         X=X+150
-        self.entry_user = tk.Entry(self.window_login,width=13,font=('helvetica', size_s)) 
-        self.entry_user.place(x=X/scaling_factor,y=Y/scaling_factor,anchor='w')
+        self.entry_user = tk.Entry(self.window_login,width=13,font=('helvetica', self.gui_const.police_sizes[1])) 
+        self.entry_user.place(x=X/self.gui_const.screen_scaling,y=Y/self.gui_const.screen_scaling,anchor='w')
         self.entry_user.focus()
         
         Y = 200
 
         button_login = ttk.Button(self.window_login, text="Login", command=self.login)
-        button_login.place(x=100/scaling_factor,y=Y/scaling_factor,anchor='s')
+        button_login.place(x=100/self.gui_const.screen_scaling,y=Y/self.gui_const.screen_scaling,anchor='s')
         button_login.bind('<Return>',self.login)
         
         button_newuser = ttk.Button(self.window_login, text="New User", command=self.new_user)
-        button_newuser.place(x=300/scaling_factor,y=Y/scaling_factor,anchor='s')
+        button_newuser.place(x=300/self.gui_const.screen_scaling,y=Y/self.gui_const.screen_scaling,anchor='s')
         button_newuser.bind('<Return>',self.new_user)
         
         
         button_exit = ttk.Button(self.window_login, text="Exit", command=self.close_all)
-        button_exit.place(x=500/scaling_factor,y=Y/scaling_factor,anchor='s')
+        button_exit.place(x=500/self.gui_const.screen_scaling,y=Y/self.gui_const.screen_scaling,anchor='s')
         button_exit.bind('<Return>',self.close_all)
     
     def new_user(self, event = "e"):
@@ -448,31 +439,31 @@ class Root(tk.Tk):
     
     def user_exists(self):
         X,Y = 550, 100
-        self.window_userexists = tk.Toplevel(bg=color_set[0],bd=2)
+        self.window_userexists = tk.Toplevel(bg=self.gui_const.color_set[0],bd=2)
         self.window_userexists.wm_iconbitmap('icon.ico')
-        self.window_userexists.geometry("%dx%d%+d%+d" % (int(X/scaling_factor), Y/scaling_factor, (2560/2)/scaling_factor, (1440/2)/scaling_factor))
+        self.window_userexists.geometry("%dx%d%+d%+d" % (int(X/self.gui_const.screen_scaling), Y/self.gui_const.screen_scaling, (2560/2)/self.gui_const.screen_scaling, (1440/2)/self.gui_const.screen_scaling))
             
         self.window_userexists.grab_set()
         
         X,Y = X/2, 75
         text_user="User already exists"
-        label = tk.Label(self.window_userexists, text=text_user,bg=color_set[0],font=('helvetica', size_s))
+        label = tk.Label(self.window_userexists, text=text_user,bg=self.gui_const.color_set[0],font=('helvetica', self.gui_const.police_sizes[1]))
         label.configure(justify="left")
-        label.place(x=X/scaling_factor,y=Y/scaling_factor,anchor='s')
+        label.place(x=X/self.gui_const.screen_scaling,y=Y/self.gui_const.screen_scaling,anchor='s')
     
     def enter_name(self):
         X,Y = 550, 100
-        self.window_userexists = tk.Toplevel(bg=color_set[0],bd=2)
+        self.window_userexists = tk.Toplevel(bg=self.gui_const.color_set[0],bd=2)
         self.window_userexists.wm_iconbitmap('icon.ico')
-        self.window_userexists.geometry("%dx%d%+d%+d" % (int(X/scaling_factor), Y/scaling_factor, (2560/2)/scaling_factor, (1440/2)/scaling_factor))
+        self.window_userexists.geometry("%dx%d%+d%+d" % (int(X/self.gui_const.screen_scaling), Y/self.gui_const.screen_scaling, (2560/2)/self.gui_const.screen_scaling, (1440/2)/self.gui_const.screen_scaling))
             
         self.window_userexists.grab_set()
         
         X,Y = X/2, 75
         text_user="Enter a valid Username"
-        label = tk.Label(self.window_userexists, text=text_user,bg=color_set[0],font=('helvetica', size_s))
+        label = tk.Label(self.window_userexists, text=text_user,bg=self.gui_const.color_set[0],font=('helvetica', self.gui_const.police_sizes[1]))
         label.configure(justify="left")
-        label.place(x=X/scaling_factor,y=Y/scaling_factor,anchor='s')
+        label.place(x=X/self.gui_const.screen_scaling,y=Y/self.gui_const.screen_scaling,anchor='s')
     
     def create_user(self):
         os.mkdir(f"{MAIN_FOLDER}/Materials/{self.user}")
@@ -529,25 +520,25 @@ class Root(tk.Tk):
         
     
     def overwrite(self):
-        self.window_overwrite = tk.Toplevel(bg=color_set[0],bd=2)
+        self.window_overwrite = tk.Toplevel(bg=self.gui_const.color_set[0],bd=2)
         self.window_overwrite.wm_iconbitmap('icon.ico')
-        self.window_overwrite.geometry("%dx%d%+d%+d" % (int(750/scaling_factor), 250/scaling_factor, (2560/2)/scaling_factor, (1440/2)/scaling_factor))
+        self.window_overwrite.geometry("%dx%d%+d%+d" % (int(750/self.gui_const.screen_scaling), 250/self.gui_const.screen_scaling, (2560/2)/self.gui_const.screen_scaling, (1440/2)/self.gui_const.screen_scaling))
             
         self.window_overwrite.grab_set()
         
         X,Y = 375,100
         
         select = "This calbration already exists \ndo you want to overwrite it?"
-        label = tk.Label(self.window_overwrite, text=select,bg=color_set[0],font=('helvetica', size_xs))
-        label.place(x=X/scaling_factor,y=Y/scaling_factor,anchor='s')
+        label = tk.Label(self.window_overwrite, text=select,bg=self.gui_const.color_set[0],font=('helvetica', self.gui_const.police_sizes[2]))
+        label.place(x=X/self.gui_const.screen_scaling,y=Y/self.gui_const.screen_scaling,anchor='s')
         
         X,Y=375-100,200
         button_yes = ttk.Button(self.window_overwrite, text="YES", command=self.import_calibration_routine)
-        button_yes.place(x=X/scaling_factor,y=Y/scaling_factor,anchor='s')
+        button_yes.place(x=X/self.gui_const.screen_scaling,y=Y/self.gui_const.screen_scaling,anchor='s')
         
         X=375+100
         button_no = ttk.Button(self.window_overwrite, text="NO", command=self.window_overwrite.destroy)
-        button_no.place(x=X/scaling_factor,y=Y/scaling_factor,anchor='s')
+        button_no.place(x=X/self.gui_const.screen_scaling,y=Y/self.gui_const.screen_scaling,anchor='s')
         
     def login(self,event = "e"):
         user = self.entry_user.get()
@@ -569,10 +560,10 @@ class Root(tk.Tk):
         Hunt_choices = sorted(Hunt_choices)
         
         if len(Hunt_choices) > 0:
-            X,Y,Ystep=850/scaling_factor,810/scaling_factor,85/scaling_factor
+            X,Y,Ystep=850/self.gui_const.screen_scaling,810/self.gui_const.screen_scaling,85/self.gui_const.screen_scaling
         
             self.Optionmenu_hunt = tk.OptionMenu(self, self.Var_hunt_material, *Hunt_choices, command = self.actualize_range)
-            self.Optionmenu_hunt.config(font=('helvetica', size_s),width=14,bg = color_set[0])
+            self.Optionmenu_hunt.config(font=('helvetica', self.gui_const.police_sizes[1]),width=14,bg = self.gui_const.color_set[0])
             self.Optionmenu_hunt.place(x=X,y=Y,anchor='w')
             self.Var_hunt_material.set(Hunt_choices[0])
             self.actualize_range(Hunt_choices[0])
@@ -594,29 +585,29 @@ class Root(tk.Tk):
         self.Entry_range_max.insert(0,rmax)
     
     def import_calibration(self):        
-        self.window_import = tk.Toplevel(bg=color_set[0],bd=2)
+        self.window_import = tk.Toplevel(bg=self.gui_const.color_set[0],bd=2)
         self.window_import.wm_iconbitmap('icon.ico')
-        self.window_import.geometry("%dx%d%+d%+d" % (int(750/scaling_factor), 250/scaling_factor, (2560/2)/scaling_factor, (1440/2)/scaling_factor))
+        self.window_import.geometry("%dx%d%+d%+d" % (int(750/self.gui_const.screen_scaling), 250/self.gui_const.screen_scaling, (2560/2)/self.gui_const.screen_scaling, (1440/2)/self.gui_const.screen_scaling))
             
         self.window_import.grab_set()
         
         X,Y = 50,50
         
         select = "Chose a calibration to import:"
-        label = tk.Label(self.window_import, text=select,bg=color_set[0],font=('helvetica', size_xs))
-        label.place(x=X/scaling_factor,y=Y/scaling_factor,anchor='w')
+        label = tk.Label(self.window_import, text=select,bg=self.gui_const.color_set[0],font=('helvetica', self.gui_const.police_sizes[2]))
+        label.place(x=X/self.gui_const.screen_scaling,y=Y/self.gui_const.screen_scaling,anchor='w')
         
         Y+=100
         
         self.Var_import_calibration = tk.StringVar()
         Hunt_choices = set(os.listdir(f"{MAIN_FOLDER}/Materials/Default"))
         self.Optionmenu_import = tk.OptionMenu(self.window_import, self.Var_import_calibration, *Hunt_choices)
-        self.Optionmenu_import.config(font=('helvetica', size_s),width=14,bg = color_set[0])
-        self.Optionmenu_import.place(x=X/scaling_factor,y=Y/scaling_factor,anchor='w')
+        self.Optionmenu_import.config(font=('helvetica', self.gui_const.police_sizes[1]),width=14,bg = self.gui_const.color_set[0])
+        self.Optionmenu_import.place(x=X/self.gui_const.screen_scaling,y=Y/self.gui_const.screen_scaling,anchor='w')
         
         X+=500
         button_ok = ttk.Button(self.window_import, text="OK", command=self.check_import_calibration)
-        button_ok.place(x=X/scaling_factor,y=Y/scaling_factor,anchor='w')
+        button_ok.place(x=X/self.gui_const.screen_scaling,y=Y/self.gui_const.screen_scaling,anchor='w')
         
     
     def check_training(self):
@@ -638,62 +629,62 @@ class Root(tk.Tk):
     def not_enough_flakes(self):
         DX = 500
         
-        self.window_not_enough_flakes = tk.Toplevel(bg=color_set[0],bd=2)
+        self.window_not_enough_flakes = tk.Toplevel(bg=self.gui_const.color_set[0],bd=2)
         self.window_not_enough_flakes.wm_iconbitmap('icon.ico')
-        self.window_not_enough_flakes.geometry("%dx%d%+d%+d" % (int(DX/scaling_factor), 200/scaling_factor, (2560/2)/scaling_factor, (1440/2)/scaling_factor))
+        self.window_not_enough_flakes.geometry("%dx%d%+d%+d" % (int(DX/self.gui_const.screen_scaling), 200/self.gui_const.screen_scaling, (2560/2)/self.gui_const.screen_scaling, (1440/2)/self.gui_const.screen_scaling))
             
         self.window_not_enough_flakes.grab_set()
         
         X,Y = DX/2,100
         
         select = "Not enough flakes in data base.\nYou'll need to hunt more"
-        label = tk.Label(self.window_not_enough_flakes, text=select,bg=color_set[0],font=('helvetica', size_xs))
-        label.place(x=X/scaling_factor,y=Y/scaling_factor,anchor='s')
+        label = tk.Label(self.window_not_enough_flakes, text=select,bg=self.gui_const.color_set[0],font=('helvetica', self.gui_const.police_sizes[2]))
+        label.place(x=X/self.gui_const.screen_scaling,y=Y/self.gui_const.screen_scaling,anchor='s')
         
         Y+=75
         button_ok = ttk.Button(self.window_not_enough_flakes, text="OK", command=self.window_not_enough_flakes.destroy)
-        button_ok.place(x=X/scaling_factor,y=Y/scaling_factor,anchor='s')
+        button_ok.place(x=X/self.gui_const.screen_scaling,y=Y/self.gui_const.screen_scaling,anchor='s')
     
     def openTrainWindow(self):
         DX = 400
-        self.training_popup = tk.Toplevel(bg=color_set[0],bd=2)
+        self.training_popup = tk.Toplevel(bg=self.gui_const.color_set[0],bd=2)
         self.training_popup.wm_iconbitmap('icon.ico')
-        self.training_popup.geometry("%dx%d%+d%+d" % (int(DX/scaling_factor), 200/scaling_factor, (2560/2)/scaling_factor, (1440/2)/scaling_factor))
+        self.training_popup.geometry("%dx%d%+d%+d" % (int(DX/self.gui_const.screen_scaling), 200/self.gui_const.screen_scaling, (2560/2)/self.gui_const.screen_scaling, (1440/2)/self.gui_const.screen_scaling))
             
         self.training_popup.grab_set()
         
         X,Y = DX/2,50
         
         select = "Training iterations"
-        label = tk.Label(self.training_popup, text=select,bg=color_set[0],font=('helvetica', size_xs))
-        label.place(x=X/scaling_factor,y=Y/scaling_factor,anchor='center')
+        label = tk.Label(self.training_popup, text=select,bg=self.gui_const.color_set[0],font=('helvetica', self.gui_const.police_sizes[2]))
+        label.place(x=X/self.gui_const.screen_scaling,y=Y/self.gui_const.screen_scaling,anchor='center')
         
         Y+=75
         X = DX/2-100
-        self.entry_epoch = tk.Entry(self.training_popup,width=4,font=('helvetica', size_s), justify="right")
+        self.entry_epoch = tk.Entry(self.training_popup,width=4,font=('helvetica', self.gui_const.police_sizes[1]), justify="right")
         self.entry_epoch.insert(0,50)
-        self.entry_epoch.place(x=X/scaling_factor,y=Y/scaling_factor,anchor='center')
+        self.entry_epoch.place(x=X/self.gui_const.screen_scaling,y=Y/self.gui_const.screen_scaling,anchor='center')
         
         X = DX/2+100
         button_go = ttk.Button(self.training_popup, text="Go", command=self.train_model)
-        button_go.place(x=X/scaling_factor,y=Y/scaling_factor,anchor='center')
+        button_go.place(x=X/self.gui_const.screen_scaling,y=Y/self.gui_const.screen_scaling,anchor='center')
         
     def train_model(self):
         DX, DY = 400, 200
         self.epoch = int(self.entry_epoch.get())
         self.training_popup.destroy()
         
-        self.training_popup = tk.Toplevel(bg=color_set[0],bd=2)
+        self.training_popup = tk.Toplevel(bg=self.gui_const.color_set[0],bd=2)
         self.training_popup.wm_iconbitmap('icon.ico')
-        self.training_popup.geometry("%dx%d%+d%+d" % (int(DX/scaling_factor), DY/scaling_factor, (2560/2)/scaling_factor, (1440/2)/scaling_factor))
+        self.training_popup.geometry("%dx%d%+d%+d" % (int(DX/self.gui_const.screen_scaling), DY/self.gui_const.screen_scaling, (2560/2)/self.gui_const.screen_scaling, (1440/2)/self.gui_const.screen_scaling))
             
         self.training_popup.grab_set()
         
         X,Y = DX/2,DY/2
         
         inprogress = "Training in progress 0%"
-        self.label_progress = tk.Label(self.training_popup, text=inprogress,bg=color_set[0],font=('helvetica', size_xs))
-        self.label_progress.place(x=X/scaling_factor,y=Y/scaling_factor,anchor='center')
+        self.label_progress = tk.Label(self.training_popup, text=inprogress,bg=self.gui_const.color_set[0],font=('helvetica', self.gui_const.police_sizes[2]))
+        self.label_progress.place(x=X/self.gui_const.screen_scaling,y=Y/self.gui_const.screen_scaling,anchor='center')
         
         self.queue_train = queue.Queue()
         
@@ -773,52 +764,52 @@ class Root(tk.Tk):
     def show_plot_training(self):
         self.training_popup.destroy()
         
-        self.window_plot = tk.Toplevel(bg=color_set[0],bd=2)
+        self.window_plot = tk.Toplevel(bg=self.gui_const.color_set[0],bd=2)
         self.window_plot.wm_iconbitmap('icon.ico') 
-        self.window_plot.geometry("%dx%d%+d%+d" % (int(1400/scaling_factor), int(1400/scaling_factor), (2560/2)/scaling_factor, (100)/scaling_factor)) 
+        self.window_plot.geometry("%dx%d%+d%+d" % (int(1400/self.gui_const.screen_scaling), int(1400/self.gui_const.screen_scaling), (2560/2)/self.gui_const.screen_scaling, (100)/self.gui_const.screen_scaling)) 
         self.window_plot.grab_set()
         
         
         X,Y = 50,50
         text = "Training completed"
-        label = tk.Label(self.window_plot, text=text,bg=color_set[0],font=('helvetica', size_l))
-        label.place(x=X/scaling_factor,y=Y/scaling_factor,anchor='w')
+        label = tk.Label(self.window_plot, text=text,bg=self.gui_const.color_set[0],font=('helvetica', self.gui_const.police_sizes[0]))
+        label.place(x=X/self.gui_const.screen_scaling,y=Y/self.gui_const.screen_scaling,anchor='w')
         
         X,Y = X+50,Y+150
         text = "Genral accuracy: "
-        label = tk.Label(self.window_plot, text=text,bg=color_set[0],font=('helvetica', size_xs))
-        label.place(x=X/scaling_factor,y=Y/scaling_factor,anchor='w')
+        label = tk.Label(self.window_plot, text=text,bg=self.gui_const.color_set[0],font=('helvetica', self.gui_const.police_sizes[2]))
+        label.place(x=X/self.gui_const.screen_scaling,y=Y/self.gui_const.screen_scaling,anchor='w')
         
         offsetx = 500
         X = X+offsetx
         text = f"{np.round(self.accuracy[2][-1]*100,1)} %"
-        label = tk.Label(self.window_plot, text=text,bg=color_set[0],font=('helvetica', size_xs))
-        label.place(x=X/scaling_factor,y=Y/scaling_factor,anchor='e')
+        label = tk.Label(self.window_plot, text=text,bg=self.gui_const.color_set[0],font=('helvetica', self.gui_const.police_sizes[2]))
+        label.place(x=X/self.gui_const.screen_scaling,y=Y/self.gui_const.screen_scaling,anchor='e')
         text 
         
         Xs = X+50
         text = f"(Sample size: {int(self.accuracy[6])})"
-        label = tk.Label(self.window_plot, text=text,bg=color_set[0],font=('helvetica', size_xs))
-        label.place(x=Xs/scaling_factor,y=Y/scaling_factor,anchor='w')
+        label = tk.Label(self.window_plot, text=text,bg=self.gui_const.color_set[0],font=('helvetica', self.gui_const.police_sizes[2]))
+        label.place(x=Xs/self.gui_const.screen_scaling,y=Y/self.gui_const.screen_scaling,anchor='w')
         
         X,Y = X-offsetx,Y+75
         text = "Misidentified good flakes: "
-        label = tk.Label(self.window_plot, text=text,bg=color_set[0],font=('helvetica', size_xs))
-        label.place(x=X/scaling_factor,y=Y/scaling_factor,anchor='w')
+        label = tk.Label(self.window_plot, text=text,bg=self.gui_const.color_set[0],font=('helvetica', self.gui_const.police_sizes[2]))
+        label.place(x=X/self.gui_const.screen_scaling,y=Y/self.gui_const.screen_scaling,anchor='w')
         
         X = X+offsetx
         text = f"{np.round(self.accuracy[5]*100,1)} %"
-        label = tk.Label(self.window_plot, text=text,bg=color_set[0],font=('helvetica', size_xs))
-        label.place(x=X/scaling_factor,y=Y/scaling_factor,anchor='e')
+        label = tk.Label(self.window_plot, text=text,bg=self.gui_const.color_set[0],font=('helvetica', self.gui_const.police_sizes[2]))
+        label.place(x=X/self.gui_const.screen_scaling,y=Y/self.gui_const.screen_scaling,anchor='e')
         
         Xs = X+50
         text = f"(Sample size: {int(self.accuracy[6]/2)})"
-        label = tk.Label(self.window_plot, text=text,bg=color_set[0],font=('helvetica', size_xs))
-        label.place(x=Xs/scaling_factor,y=Y/scaling_factor,anchor='w')
+        label = tk.Label(self.window_plot, text=text,bg=self.gui_const.color_set[0],font=('helvetica', self.gui_const.police_sizes[2]))
+        label.place(x=Xs/self.gui_const.screen_scaling,y=Y/self.gui_const.screen_scaling,anchor='w')
         
         
         
-        plt.rc('axes', labelsize=20/scaling_factor)
+        plt.rc('axes', labelsize=20/self.gui_const.screen_scaling)
         plt.switch_backend('agg')
         
         ylabel=["accuracy","loss"]
@@ -829,21 +820,21 @@ class Root(tk.Tk):
         Y=1300
         X = 700-200
         self.button_save = ttk.Button(self.window_plot, text="save", command=self.saveModel)
-        self.button_save.place(x=X/scaling_factor,y=Y/scaling_factor,anchor='s')
+        self.button_save.place(x=X/self.gui_const.screen_scaling,y=Y/self.gui_const.screen_scaling,anchor='s')
         
         X = 700+200
         button_discard = ttk.Button(self.window_plot, text="close", command=self.window_plot.destroy)
-        button_discard.place(x=X/scaling_factor,y=Y/scaling_factor,anchor='s')
+        button_discard.place(x=X/self.gui_const.screen_scaling,y=Y/self.gui_const.screen_scaling,anchor='s')
         
             
     def plot_routine_training(self,i,ylabel,X):
         sq = 7
-        figure = plt.Figure(figsize=(sq/scaling_factor,sq/scaling_factor), dpi=100, tight_layout=True)
+        figure = plt.Figure(figsize=(sq/self.gui_const.screen_scaling,sq/self.gui_const.screen_scaling), dpi=100, tight_layout=True)
         plt.switch_backend('agg')
         ax = figure.add_subplot(111)
         line = FigureCanvasTkAgg(figure,self.window_plot)
         Y=800
-        line.get_tk_widget().place(x=X/scaling_factor,y=Y/scaling_factor,anchor='center')
+        line.get_tk_widget().place(x=X/self.gui_const.screen_scaling,y=Y/self.gui_const.screen_scaling,anchor='center')
         
         ax.plot(self.accuracy[0],self.accuracy[i],color="b",marker='o',lw=2,ms=0)
         ax.plot(self.accuracy[0],self.accuracy[i+1],color="r",marker='o',lw=2,ms=0)
@@ -873,39 +864,39 @@ class Root(tk.Tk):
     
     def LastStep(self):
         Proceed=1
-        posX,posY=10/scaling_factor,120/scaling_factor
-        height,width=190/scaling_factor,780/scaling_factor
+        posX,posY=10/self.gui_const.screen_scaling,120/self.gui_const.screen_scaling
+        height,width=190/self.gui_const.screen_scaling,780/self.gui_const.screen_scaling
         try:
             if self.filename == "":
                 Proceed=0
-                self.errorFrame(posX,posY,width,height,color_error)
+                self.errorFrame(posX,posY,width,height,self.gui_const.color_error)
                 self.Label_image.configure(text="Specify working folder")
             
             else:
                 Proceed=1
-                self.errorFrame(posX,posY,width,height,color_set[0])
+                self.errorFrame(posX,posY,width,height,self.gui_const.color_set[0])
         except :
             Proceed=0            
-            self.errorFrame(posX,posY,width,height,color_error)         
+            self.errorFrame(posX,posY,width,height,self.gui_const.color_error)         
             self.Label_image.configure(text="Specify working folder")
         
         if Proceed==1:
-            self.window_RUSURE = tk.Toplevel(bg=color_set[0],bd=2)
+            self.window_RUSURE = tk.Toplevel(bg=self.gui_const.color_set[0],bd=2)
             self.window_RUSURE.wm_iconbitmap('icon.ico')
-            self.window_RUSURE.geometry("%dx%d%+d%+d" % (int(1100/scaling_factor), 250/scaling_factor, (2560/2)/scaling_factor, (1440/2)/scaling_factor))
+            self.window_RUSURE.geometry("%dx%d%+d%+d" % (int(1100/self.gui_const.screen_scaling), 250/self.gui_const.screen_scaling, (2560/2)/self.gui_const.screen_scaling, (1440/2)/self.gui_const.screen_scaling))
             
             self.window_RUSURE.grab_set()
                 
             text_attention="Hunting will not be possible anymore!\nOnly do this when you are fully done."
                 
-            label = tk.Label(self.window_RUSURE, text=text_attention,bg=color_set[0],font=('helvetica', size_s))
+            label = tk.Label(self.window_RUSURE, text=text_attention,bg=self.gui_const.color_set[0],font=('helvetica', self.gui_const.police_sizes[1]))
             label.pack(fill='x', padx=50, pady=5)
 
             button_yes = ttk.Button(self.window_RUSURE, text="Continue", command=self.clean_folder)
             button_no = ttk.Button(self.window_RUSURE, text="Cancel", command=self.window_RUSURE.destroy)
                                 
-            button_no.place(x=400/scaling_factor,y=210/scaling_factor,anchor='s')
-            button_yes.place(x=700/scaling_factor,y=210/scaling_factor,anchor='s')
+            button_no.place(x=400/self.gui_const.screen_scaling,y=210/self.gui_const.screen_scaling,anchor='s')
+            button_yes.place(x=700/self.gui_const.screen_scaling,y=210/self.gui_const.screen_scaling,anchor='s')
         
     def clean_folder(self):
         try:
@@ -935,26 +926,26 @@ class Root(tk.Tk):
          tk.Radiobutton(self, 
               indicatoron = 0,
               text=text,
-              selectcolor = color_set[2],
-              bg = color_set[0],
+              selectcolor = self.gui_const.color_set[2],
+              bg = self.gui_const.color_set[0],
               width=4,
-              font=('helvetica', size_s),
+              font=('helvetica', self.gui_const.police_sizes[1]),
               variable=self.nosepiece_selected, 
               value=value).place(x=posX,y=posY,anchor='w')
     
     def entry_hunt_size(self,text,posX,posY):
-        Offset=480/scaling_factor
+        Offset=480/self.gui_const.screen_scaling
         variable = tk.IntVar()
         tk.Checkbutton(self, 
               indicatoron = 0,
               text=text,
-              selectcolor = color_set[2],
-              bg = color_set[0],
+              selectcolor = self.gui_const.color_set[2],
+              bg = self.gui_const.color_set[0],
               width=9,
-              font=('helvetica', size_s),
+              font=('helvetica', self.gui_const.police_sizes[1]),
               variable=variable).place(x=posX,y=posY,anchor='w')
         
-        entry_size = tk.Entry(self,width=5,font=('helvetica', size_s)) 
+        entry_size = tk.Entry(self,width=5,font=('helvetica', self.gui_const.police_sizes[1])) 
         entry_size.place(x=posX+Offset, y=posY, anchor='center')
 
         return variable, entry_size
@@ -965,7 +956,7 @@ class Root(tk.Tk):
         self.Label_path.configure(text = text, justify="left")
     
     def errorFrame(self,posX,posY,width,height,color):
-        thickness=4/scaling_factor
+        thickness=4/self.gui_const.screen_scaling
         Vertical_ligne=tk.Frame(self,height=height,width=thickness,bg=color)
         Vertical_ligne.place(x=posX,y=posY)                
         Vertical_ligne=tk.Frame(self,height=height+thickness,width=thickness,bg=color)
@@ -977,18 +968,18 @@ class Root(tk.Tk):
     
     def combine_picture(self):
         Proceed=1
-        posX,posY=10/scaling_factor,120/scaling_factor
-        height,width=190/scaling_factor,780/scaling_factor
+        posX,posY=10/self.gui_const.screen_scaling,120/self.gui_const.screen_scaling
+        height,width=190/self.gui_const.screen_scaling,780/self.gui_const.screen_scaling
         try:
             if self.filename == "":
                 Proceed=0
-                self.errorFrame(posX,posY,width,height,color_error)
+                self.errorFrame(posX,posY,width,height,self.gui_const.color_error)
             else:
                 Proceed=1
-                self.errorFrame(posX,posY,width,height,color_set[0])
+                self.errorFrame(posX,posY,width,height,self.gui_const.color_set[0])
         except :
             Proceed=0            
-            self.errorFrame(posX,posY,width,height,color_error)         
+            self.errorFrame(posX,posY,width,height,self.gui_const.color_error)         
             
         if Proceed==1 and os.path.exists(self.filename+"/log_file.dat"):
             log = open(self.filename+"/log_file.dat", "r")
@@ -1009,114 +1000,113 @@ class Root(tk.Tk):
     def checkEverything(self):
         #check the inside of the folder (is there a macro in there?) 
         Proceed=1
-        posX,posY=10/scaling_factor,120/scaling_factor
-        height,width=190/scaling_factor,780/scaling_factor
+        posX,posY=10/self.gui_const.screen_scaling,120/self.gui_const.screen_scaling
+        height,width=190/self.gui_const.screen_scaling,780/self.gui_const.screen_scaling
         try:
             if self.filename == "":
                 Proceed=0
-                self.errorFrame(posX,posY,width,height,color_error)
+                self.errorFrame(posX,posY,width,height,self.gui_const.color_error)
                 self.Label_macro.configure(text="Specify working folder")
             
             else:
                 Proceed=1
-                self.errorFrame(posX,posY,width,height,color_set[0])
+                self.errorFrame(posX,posY,width,height,self.gui_const.color_set[0])
 
         except :
             Proceed=0            
-            self.errorFrame(posX,posY,width,height,color_error)         
+            self.errorFrame(posX,posY,width,height,self.gui_const.color_error)         
             self.Label_macro.configure(text="Specify working folder")
         
-        posX,posY=10/scaling_factor,420/scaling_factor
-        height,width=190/scaling_factor,780/scaling_factor
+        posX,posY=10/self.gui_const.screen_scaling,420/self.gui_const.screen_scaling
+        height,width=190/self.gui_const.screen_scaling,780/self.gui_const.screen_scaling
         if Proceed==1 and hasattr(self, 'Nwafer')==False:
             Proceed=0
-            self.errorFrame(posX,posY,width,height,color_error)         
+            self.errorFrame(posX,posY,width,height,self.gui_const.color_error)         
             self.Label_macro.configure(text="Specify wafer position and size")
         elif Proceed==1 and hasattr(self, 'Nwafer'):
             Proceed=1
-            self.errorFrame(posX,posY,width,height,color_set[0])  
+            self.errorFrame(posX,posY,width,height,self.gui_const.color_set[0])  
         
-        posX,posY=10/scaling_factor,420/scaling_factor
-        height,width=190/scaling_factor,780/scaling_factor
+        posX,posY=10/self.gui_const.screen_scaling,420/self.gui_const.screen_scaling
+        height,width=190/self.gui_const.screen_scaling,780/self.gui_const.screen_scaling
         if Proceed==1 and hasattr(self, 'sample_dim')==False:
             Proceed=0
-            self.errorFrame(posX,posY,width,height,color_error)         
+            self.errorFrame(posX,posY,width,height,self.gui_const.color_error)         
             self.Label_macro.configure(text="Specify wafer position and size")
         elif Proceed==1 and hasattr(self, 'sample_dim'):
             Proceed=1
-            self.errorFrame(posX,posY,width,height,color_set[0])
+            self.errorFrame(posX,posY,width,height,self.gui_const.color_set[0])
         
-        posX,posY=10/scaling_factor,650/scaling_factor
-        height,width=90/scaling_factor,780/scaling_factor
+        posX,posY=10/self.gui_const.screen_scaling,650/self.gui_const.screen_scaling
+        height,width=90/self.gui_const.screen_scaling,780/self.gui_const.screen_scaling
         if Proceed==1 and self.var_auto_hunt.get()==1 and self.var_auto_stitch.get()==0:
             Proceed=0
             self.Label_macro.configure(text = "Auto Stitch if you Auto Hunt")
-            self.errorFrame(posX,posY,width,height,color_error)
+            self.errorFrame(posX,posY,width,height,self.gui_const.color_error)
         elif Proceed==1 and self.var_auto_hunt.get()==1 and self.var_auto_stitch.get()==1:
-            self.errorFrame(posX,posY,width,height,color_set[0])
+            self.errorFrame(posX,posY,width,height,self.gui_const.color_set[0])
         elif Proceed==1 and self.var_auto_hunt.get()==0 and self.var_auto_stitch.get()==0:
-            self.errorFrame(posX,posY,width,height,color_set[0])
+            self.errorFrame(posX,posY,width,height,self.gui_const.color_set[0])
         elif Proceed==1 and self.var_auto_hunt.get()==1 and self.var_auto_stitch.get()==0:
-            self.errorFrame(posX,posY,width,height,color_set[0])
+            self.errorFrame(posX,posY,width,height,self.gui_const.color_set[0])
         
-        posX,posY=810/scaling_factor,760/scaling_factor
-        height,width=100/scaling_factor,780/scaling_factor
+        posX,posY=810/self.gui_const.screen_scaling,760/self.gui_const.screen_scaling
+        height,width=100/self.gui_const.screen_scaling,780/self.gui_const.screen_scaling
         if Proceed==1:
             self.material=f"{self.user}/{self.Var_hunt_material.get()}"
-            self.errorFrame(posX,posY,width,height,color_set[0])
+            self.errorFrame(posX,posY,width,height,self.gui_const.color_set[0])
             if self.var_auto_hunt.get()==1 and self.material == f"{self.user}/":
                 Proceed=0
-                self.errorFrame(posX,posY,width,height,color_error)
+                self.errorFrame(posX,posY,width,height,self.gui_const.color_error)
                 self.label_hunt.configure(text="Specify flake type if you Auto Hunt")
         
         if Proceed==1 and self.var_auto_hunt.get()==1:
             try :
                   print(float(self.Entry_size.get()))
-                  self.errorFrame(posX,posY,width,height,color_set[0])
+                  self.errorFrame(posX,posY,width,height,self.gui_const.color_set[0])
                   Proceed=1
             except:
                 Proceed=0
-                self.errorFrame(posX,posY,width,height,color_error)        
+                self.errorFrame(posX,posY,width,height,self.gui_const.color_error)        
                 self.Label_macro.configure(text = "Specify flake size if you Auto Hunt")
         
         if Proceed==1 and self.var_auto_hunt.get()==1:
             try :
                 print(float(self.Entry_size.get()))
-                self.errorFrame(posX,posY,width,height,color_set[0])
+                self.errorFrame(posX,posY,width,height,self.gui_const.color_set[0])
             except:
                 Proceed=0
-                self.errorFrame(posX,posY,width,height,color_error)        
+                self.errorFrame(posX,posY,width,height,self.gui_const.color_error)        
                 self.Label_macro.configure(text = "Specify flake size if you Auto Hunt")
         
-        posX,posY=50/scaling_factor,880/scaling_factor
-        height,width=115/scaling_factor,710/scaling_factor
+        posX,posY=50/self.gui_const.screen_scaling,880/self.gui_const.screen_scaling
+        height,width=115/self.gui_const.screen_scaling,710/self.gui_const.screen_scaling
         if Proceed==1 and self.nosepiece_selected.get()==0:
             Proceed=0
             self.Label_macro.configure(text = "Specify Nosepiece")
-            self.errorFrame(posX,posY,width,height,color_error)
+            self.errorFrame(posX,posY,width,height,self.gui_const.color_error)
         elif Proceed==1 and self.nosepiece_selected.get()>0:
-            self.errorFrame(posX,posY,width,height,color_set[0])       
+            self.errorFrame(posX,posY,width,height,self.gui_const.color_set[0])       
         
         if  Proceed==1:
             does_logfile_exists=0
             for i in range(self.Nwafer):
                 does_logfile_exists+=os.path.exists(self.filename+"Wafer_"+str(i).zfill(2)+"/log_file.dat")
             if does_logfile_exists>0:
-                self.window_eraselog = tk.Toplevel(bg=color_set[0],bd=2)
+                self.window_eraselog = tk.Toplevel(bg=self.gui_const.color_set[0],bd=2)
                 self.window_eraselog.wm_iconbitmap('icon.ico') 
-                int(Window_size[0]/scaling_factor)
-                self.window_eraselog.geometry("%dx%d%+d%+d" % (int(1500/scaling_factor), 300/scaling_factor, (2560/2)/scaling_factor, (1440/2)/scaling_factor)) 
+                self.window_eraselog.geometry("%dx%d%+d%+d" % (int(1500/self.gui_const.screen_scaling), 300/self.gui_const.screen_scaling, (2560/2)/self.gui_const.screen_scaling, (1440/2)/self.gui_const.screen_scaling)) 
                 self.window_eraselog.grab_set()
                 
                 text_attention="Current log files will be lost.\nThis might prevent later stitching of already acquired images.\nAre you sure you want to proceed?"
                 
-                label = tk.Label(self.window_eraselog, text=text_attention,bg=color_set[0],font=('helvetica', size_s))
+                label = tk.Label(self.window_eraselog, text=text_attention,bg=self.gui_const.color_set[0],font=('helvetica', self.gui_const.police_sizes[1]))
                 label.pack(fill='x', padx=50, pady=5)
 
                 button_yes = ttk.Button(self.window_eraselog, text="OK", command=self.createMacro)
                 button_no = ttk.Button(self.window_eraselog, text="Cancel", command=self.window_eraselog.destroy) 
-                button_no.place(x=600/scaling_factor,y=260/scaling_factor,anchor='s')
-                button_yes.place(x=900/scaling_factor,y=260/scaling_factor,anchor='s')      
+                button_no.place(x=600/self.gui_const.screen_scaling,y=260/self.gui_const.screen_scaling,anchor='s')
+                button_yes.place(x=900/self.gui_const.screen_scaling,y=260/self.gui_const.screen_scaling,anchor='s')      
             else:
                 self.createMacro()
         
@@ -1139,7 +1129,7 @@ class Root(tk.Tk):
         wafer="wafers"
         if self.Nwafer==1:
             wafer="wafer"
-        self.Label_macro.configure(text = "Macro created: " + str(self.Nwafer) +" "+wafer+" ..."+str(int(total_shot*0.1125+2.5))+" min",font=('helvetica', int(size_xs*0.8)))
+        self.Label_macro.configure(text = "Macro created: " + str(self.Nwafer) +" "+wafer+" ..."+str(int(total_shot*0.1125+2.5))+" min",font=('helvetica', int(self.gui_const.police_sizes[2]*0.8)))
            
         fieldofview_w=self.Fieldvalues[0]/self.factors[indicator]
         fieldofview_h=self.Fieldvalues[1]/self.factors[indicator]
@@ -1181,20 +1171,20 @@ class Root(tk.Tk):
     
     def create50xmacro(self):
         Proceed=1
-        posX,posY=10/scaling_factor,120/scaling_factor
-        height,width=190/scaling_factor,780/scaling_factor
+        posX,posY=10/self.gui_const.screen_scaling,120/self.gui_const.screen_scaling
+        height,width=190/self.gui_const.screen_scaling,780/self.gui_const.screen_scaling
         try:
             if self.filename == "":
                 Proceed=0
-                self.errorFrame(posX,posY,width,height,color_error)
+                self.errorFrame(posX,posY,width,height,self.gui_const.color_error)
                 self.Label_macro_BF.configure(text="Specify working folder")
             
             else:
                 Proceed=1
-                self.errorFrame(posX,posY,width,height,color_set[0])
+                self.errorFrame(posX,posY,width,height,self.gui_const.color_set[0])
         except :
             Proceed=0            
-            self.errorFrame(posX,posY,width,height,color_error)         
+            self.errorFrame(posX,posY,width,height,self.gui_const.color_error)         
             self.Label_macro_BF.configure(text="Specify working folder")
             
         if Proceed==1 and os.path.exists(self.filename+"/log_file.dat"):
@@ -1218,20 +1208,20 @@ class Root(tk.Tk):
             
     def createDFmacro(self):
         Proceed=1
-        posX,posY=10/scaling_factor,120/scaling_factor
-        height,width=190/scaling_factor,780/scaling_factor
+        posX,posY=10/self.gui_const.screen_scaling,120/self.gui_const.screen_scaling
+        height,width=190/self.gui_const.screen_scaling,780/self.gui_const.screen_scaling
         try:
             if self.filename == "":
                 Proceed=0
-                self.errorFrame(posX,posY,width,height,color_error)
+                self.errorFrame(posX,posY,width,height,self.gui_const.color_error)
                 self.Label_macro_DF.configure(text="Specify working folder")
             
             else:
                 Proceed=1
-                self.errorFrame(posX,posY,width,height,color_set[0])
+                self.errorFrame(posX,posY,width,height,self.gui_const.color_set[0])
         except :
             Proceed=0            
-            self.errorFrame(posX,posY,width,height,color_error)         
+            self.errorFrame(posX,posY,width,height,self.gui_const.color_error)         
             self.Label_macro_DF.configure(text="Specify working folder")
         
         if Proceed==1 and os.path.exists(self.filename+"/log_file.dat"):
@@ -1261,20 +1251,20 @@ class Root(tk.Tk):
     
     def doSelection(self):       
         Proceed = 1
-        posX,posY=10/scaling_factor,120/scaling_factor
-        height,width=190/scaling_factor,780/scaling_factor
+        posX,posY=10/self.gui_const.screen_scaling,120/self.gui_const.screen_scaling
+        height,width=190/self.gui_const.screen_scaling,780/self.gui_const.screen_scaling
         try:
             if self.filename == "":
                 Proceed=0
-                self.errorFrame(posX,posY,width,height,color_error)
+                self.errorFrame(posX,posY,width,height,self.gui_const.color_error)
                 self.label_select.configure(text="Specify working folder")
             
             else:
                 Proceed=1
-                self.errorFrame(posX,posY,width,height,color_set[0])
+                self.errorFrame(posX,posY,width,height,self.gui_const.color_set[0])
         except :
             Proceed=0            
-            self.errorFrame(posX,posY,width,height,color_error)         
+            self.errorFrame(posX,posY,width,height,self.gui_const.color_error)         
             self.label_select.configure(text="Specify working folder")
         
         if Proceed==1 and os.path.exists(self.filename+"/log_file.dat"):
@@ -1309,11 +1299,11 @@ class Root(tk.Tk):
                 self.window_selection.destroy()
         
         if Proceed==1:
-            self.window_selection = tk.Toplevel(bg=color_set[0],bd=2)
+            self.window_selection = tk.Toplevel(bg=self.gui_const.color_set[0],bd=2)
             self.window_selection.wm_iconbitmap('icon.ico')
             self.width_window_selection=1600*2
             self.height_window_selection=1800
-            self.window_selection.geometry("%dx%d%+d%+d" % (int(self.width_window_selection/scaling_factor), self.height_window_selection/scaling_factor, (2560-3200)/2/scaling_factor, (1440-self.height_window_selection)/2/scaling_factor))
+            self.window_selection.geometry("%dx%d%+d%+d" % (int(self.width_window_selection/self.gui_const.screen_scaling), self.height_window_selection/self.gui_const.screen_scaling, (2560-3200)/2/self.gui_const.screen_scaling, (1440-self.height_window_selection)/2/self.gui_const.screen_scaling))
         
             self.label_select.configure(text="Selection done")
             
@@ -1352,11 +1342,11 @@ class Root(tk.Tk):
             for names in self.list_name :
                 self.dict_keep_remove[names] = 0
             
-            self.progress=tk.Label(self.window_selection,  text=str(self.indice_flake+1)+" / "+str(self.indice_max), fg='black', font=('helvetica', size_s), bg = color_set[0])
-            self.progress.tk.place(x=50/scaling_factor, y=50/scaling_factor, anchor = 'w')
+            self.progress=tk.Label(self.window_selection,  text=str(self.indice_flake+1)+" / "+str(self.indice_max), fg='black', font=('helvetica', self.gui_const.police_sizes[1]), bg = self.gui_const.color_set[0])
+            self.progress.tk.place(x=50/self.gui_const.screen_scaling, y=50/self.gui_const.screen_scaling, anchor = 'w')
             
-            self.label_name=tk.Label(self.window_selection,  text=str(self.list_name[self.indice_flake].split("/")[-1]), fg='black', font=('helvetica', size_s), bg = color_set[0])
-            self.label_name.place(x=self.width_window_selection/2/scaling_factor, y=50/scaling_factor, anchor = 'center')
+            self.label_name=tk.Label(self.window_selection,  text=str(self.list_name[self.indice_flake].split("/")[-1]), fg='black', font=('helvetica', self.gui_const.police_sizes[1]), bg = self.gui_const.color_set[0])
+            self.label_name.place(x=self.width_window_selection/2/self.gui_const.screen_scaling, y=50/self.gui_const.screen_scaling, anchor = 'center')
             
             self.showFlake()
             
@@ -1366,11 +1356,11 @@ class Root(tk.Tk):
             button_keep = ttk.Button(self.window_selection, text="Keep", command=self.keep_flake)
             button_end = ttk.Button(self.window_selection, text="END", command=self.end_flake)
         
-            button_next.place(x=self.width_window_selection*0.60/scaling_factor,y=self.height_window_selection*0.94/scaling_factor,anchor='s')
-            button_previous.place(x=self.width_window_selection*0.40/scaling_factor,y=self.height_window_selection*0.94/scaling_factor,anchor='s')      
-            button_discard.place(x=self.width_window_selection*0.47/scaling_factor,y=self.height_window_selection*0.94/scaling_factor,anchor='s')
-            button_keep.place(x=self.width_window_selection*0.53/scaling_factor,y=self.height_window_selection*0.94/scaling_factor,anchor='s')
-            button_end.place(x=self.width_window_selection*0.5/scaling_factor,y=self.height_window_selection*0.985/scaling_factor,anchor='s')
+            button_next.place(x=self.width_window_selection*0.60/self.gui_const.screen_scaling,y=self.height_window_selection*0.94/self.gui_const.screen_scaling,anchor='s')
+            button_previous.place(x=self.width_window_selection*0.40/self.gui_const.screen_scaling,y=self.height_window_selection*0.94/self.gui_const.screen_scaling,anchor='s')      
+            button_discard.place(x=self.width_window_selection*0.47/self.gui_const.screen_scaling,y=self.height_window_selection*0.94/self.gui_const.screen_scaling,anchor='s')
+            button_keep.place(x=self.width_window_selection*0.53/self.gui_const.screen_scaling,y=self.height_window_selection*0.94/self.gui_const.screen_scaling,anchor='s')
+            button_end.place(x=self.width_window_selection*0.5/self.gui_const.screen_scaling,y=self.height_window_selection*0.985/self.gui_const.screen_scaling,anchor='s')
     
     
     def display_valdel_logo(self):
@@ -1384,13 +1374,13 @@ class Root(tk.Tk):
             load = Image.open("validate.png")
         else:
             load = Image.open("delete.png")
-        load = load.resize((int(100/scaling_factor), int(100/scaling_factor)), Image.ANTIALIAS)
+        load = load.resize((int(100/self.gui_const.screen_scaling), int(100/self.gui_const.screen_scaling)), Image.ANTIALIAS)
         render = ImageTk.PhotoImage(load)
         
-        val = tk.Label(self.window_selection, image=render, bg=color_set[0])
+        val = tk.Label(self.window_selection, image=render, bg=self.gui_const.color_set[0])
         val.image = render
-        offset = 700/scaling_factor
-        val.place(x=self.width_window_selection*(1-pos)/scaling_factor+offset,y=self.height_window_selection*0.95/2/scaling_factor-offset,anchor='center')
+        offset = 700/self.gui_const.screen_scaling
+        val.place(x=self.width_window_selection*(1-pos)/self.gui_const.screen_scaling+offset,y=self.height_window_selection*0.95/2/self.gui_const.screen_scaling-offset,anchor='center')
     
     def keep_flake(self):
         name = self.list_name[self.indice_flake]
@@ -1419,20 +1409,20 @@ class Root(tk.Tk):
         pos=0.26
         
         load_wafer = Image.open(self.list_name[self.indice_flake])
-        load_wafer = load_wafer.resize((int(1500/scaling_factor), int(1500/scaling_factor)), Image.ANTIALIAS)
+        load_wafer = load_wafer.resize((int(1500/self.gui_const.screen_scaling), int(1500/self.gui_const.screen_scaling)), Image.ANTIALIAS)
         render_wafer = ImageTk.PhotoImage(load_wafer)
         
-        self.flake = tk.Label(self.window_selection, image=render_wafer, bg = color_set[1])
+        self.flake = tk.Label(self.window_selection, image=render_wafer, bg = self.gui_const.color_set[1])
         self.flake.image = render_wafer
-        self.flake.place(x=self.width_window_selection*(1-pos)/scaling_factor,y=self.height_window_selection*0.95/2/scaling_factor,anchor='center')
+        self.flake.place(x=self.width_window_selection*(1-pos)/self.gui_const.screen_scaling,y=self.height_window_selection*0.95/2/self.gui_const.screen_scaling,anchor='center')
         
         load_wafer = Image.open(self.list_name_hc[self.indice_flake])
-        load_wafer = load_wafer.resize((int(1500/scaling_factor), int(1500/scaling_factor)), Image.ANTIALIAS)
+        load_wafer = load_wafer.resize((int(1500/self.gui_const.screen_scaling), int(1500/self.gui_const.screen_scaling)), Image.ANTIALIAS)
         render_wafer = ImageTk.PhotoImage(load_wafer)
         
-        self.flake_hc = tk.Label(self.window_selection, image=render_wafer, bg = color_set[1])
+        self.flake_hc = tk.Label(self.window_selection, image=render_wafer, bg = self.gui_const.color_set[1])
         self.flake_hc.image = render_wafer
-        self.flake_hc.place(x=self.width_window_selection*pos/scaling_factor,y=self.height_window_selection*0.95/2/scaling_factor,anchor='center')
+        self.flake_hc.place(x=self.width_window_selection*pos/self.gui_const.screen_scaling,y=self.height_window_selection*0.95/2/self.gui_const.screen_scaling,anchor='center')
         
         self.progress.configure(text=str(self.indice_flake+1)+" / "+str(self.indice_max))
         self.label_name.configure(text=str(self.list_name[self.indice_flake].split("/")[-1]))
@@ -1508,69 +1498,69 @@ class Root(tk.Tk):
             self.entry_numberofwafers.configure(bg="white")
             Proceed=1
         except:
-            self.entry_numberofwafers.configure(bg=color_error)
+            self.entry_numberofwafers.configure(bg=self.gui_const.color_error)
 
 
         if Proceed == 1:
-            height=200/scaling_factor+(self.Nwafer+1)*80/scaling_factor
-            width=int(1500/scaling_factor)
+            height=200/self.gui_const.screen_scaling+(self.Nwafer+1)*80/self.gui_const.screen_scaling
+            width=int(1500/self.gui_const.screen_scaling)
         
-            self.window_position_size = tk.Toplevel(bg=color_set[0],bd=2)
+            self.window_position_size = tk.Toplevel(bg=self.gui_const.color_set[0],bd=2)
             self.window_position_size.wm_iconbitmap('icon.ico')
-            self.window_position_size.geometry("%dx%d%+d%+d" % (width, height, (2560/2)/scaling_factor, (1440/2)/scaling_factor))
+            self.window_position_size.geometry("%dx%d%+d%+d" % (width, height, (2560/2)/self.gui_const.screen_scaling, (1440/2)/self.gui_const.screen_scaling))
         
-            posX,posY=80/scaling_factor,60/scaling_factor
+            posX,posY=80/self.gui_const.screen_scaling,60/self.gui_const.screen_scaling
     
             text=["Wafer","X","Y","W","H"]
-            posX=115/scaling_factor
-            step=210/scaling_factor
+            posX=115/self.gui_const.screen_scaling
+            step=210/self.gui_const.screen_scaling
             for i in range(5):
-                Label_header = tk.Label(self.window_position_size, text= text[i], fg='black', font=('helvetica', size_s), bg = color_set[0])
+                Label_header = tk.Label(self.window_position_size, text= text[i], fg='black', font=('helvetica', self.gui_const.police_sizes[1]), bg = self.gui_const.color_set[0])
                 Label_header.place(x=posX+i*step, y=posY, anchor='c')
             
-            X=10/scaling_factor
-            step=210/scaling_factor
+            X=10/self.gui_const.screen_scaling
+            step=210/self.gui_const.screen_scaling
             for i in range(6):
-                Vertical_ligne=tk.Frame(self.window_position_size,height=(self.Nwafer+1)*80/scaling_factor,width=2,bg=color_set[1])
+                Vertical_ligne=tk.Frame(self.window_position_size,height=(self.Nwafer+1)*80/self.gui_const.screen_scaling,width=2,bg=self.gui_const.color_set[1])
                 Vertical_ligne.place(x=X+i*step,y=10)
-            X=10/scaling_factor
-            step=80/scaling_factor
+            X=10/self.gui_const.screen_scaling
+            step=80/self.gui_const.screen_scaling
             for i in range(self.Nwafer+2):
-                Horizontal_ligne=tk.Frame(self.window_position_size,height=2,width=1050/scaling_factor,bg=color_set[1])
+                Horizontal_ligne=tk.Frame(self.window_position_size,height=2,width=1050/self.gui_const.screen_scaling,bg=self.gui_const.color_set[1])
                 Horizontal_ligne.place(x=X,y=10+i*step)
         
-            posX=115/scaling_factor
-            posY=(60+80)/scaling_factor
-            step=80/scaling_factor
+            posX=115/self.gui_const.screen_scaling
+            posY=(60+80)/self.gui_const.screen_scaling
+            step=80/self.gui_const.screen_scaling
             for i in range(self.Nwafer):
-                Label_header = tk.Label(self.window_position_size, text= str(i), fg='black', font=('helvetica', size_s), bg = color_set[0])
+                Label_header = tk.Label(self.window_position_size, text= str(i), fg='black', font=('helvetica', self.gui_const.police_sizes[1]), bg = self.gui_const.color_set[0])
                 Label_header.place(x=posX, y=posY+i*step, anchor='c')
 
 
             #A picture to illustrate the scanning size
-            image_size=int(270/scaling_factor)
-            X,Y=1300/scaling_factor,150/scaling_factor
+            image_size=int(270/self.gui_const.screen_scaling)
+            X,Y=1300/self.gui_const.screen_scaling,150/self.gui_const.screen_scaling
         
             Image_scan_size = Image.open("scan_size.png")
             Image_scan_size = Image_scan_size.resize((image_size, image_size), Image.ANTIALIAS)
             Render_image_scan_size = ImageTk.PhotoImage(Image_scan_size)
         
-            Label_image_scan_size= tk.Label(self.window_position_size, image=Render_image_scan_size, bg = color_set[0])
+            Label_image_scan_size= tk.Label(self.window_position_size, image=Render_image_scan_size, bg = self.gui_const.color_set[0])
             Label_image_scan_size.image = Render_image_scan_size
             Label_image_scan_size.place(x=X, y=Y, anchor='c')
         
         
             #entries
-            stepY=80/scaling_factor
-            stepX=210/scaling_factor
-            posX=(115+210)/scaling_factor
-            posY=(60+80)/scaling_factor
+            stepY=80/self.gui_const.screen_scaling
+            stepX=210/self.gui_const.screen_scaling
+            posX=(115+210)/self.gui_const.screen_scaling
+            posY=(60+80)/self.gui_const.screen_scaling
             self.entry_sample=[]
             for i in range(self.Nwafer):
-                entry_X=tk.Entry(self.window_position_size,width=6,font=('helvetica', size_s))
-                entry_Y=tk.Entry(self.window_position_size,width=6,font=('helvetica', size_s))
-                entry_W=tk.Entry(self.window_position_size,width=6,font=('helvetica', size_s))
-                entry_H=tk.Entry(self.window_position_size,width=6,font=('helvetica', size_s))
+                entry_X=tk.Entry(self.window_position_size,width=6,font=('helvetica', self.gui_const.police_sizes[1]))
+                entry_Y=tk.Entry(self.window_position_size,width=6,font=('helvetica', self.gui_const.police_sizes[1]))
+                entry_W=tk.Entry(self.window_position_size,width=6,font=('helvetica', self.gui_const.police_sizes[1]))
+                entry_H=tk.Entry(self.window_position_size,width=6,font=('helvetica', self.gui_const.police_sizes[1]))
             
                 entry_X.place(x=posX, y=posY+i*stepY, anchor='c')
                 entry_Y.place(x=posX+stepX, y=posY+i*stepY, anchor='c')
@@ -1580,10 +1570,10 @@ class Root(tk.Tk):
                 self.entry_sample.append([entry_X,entry_Y,entry_H,entry_W])
         
             split=150
-            X,Y=(1060/2+split)/scaling_factor,100/scaling_factor+(self.Nwafer+1)*80/scaling_factor
+            X,Y=(1060/2+split)/self.gui_const.screen_scaling,100/self.gui_const.screen_scaling+(self.Nwafer+1)*80/self.gui_const.screen_scaling
             Button_validate = ttk.Button(self.window_position_size, text = " Validate ",command = self.validate_position)
             Button_validate.place(x=X,y=Y,anchor='center')
-            X,Y=(1060/2-split)/scaling_factor,100/scaling_factor+(self.Nwafer+1)*80/scaling_factor
+            X,Y=(1060/2-split)/self.gui_const.screen_scaling,100/self.gui_const.screen_scaling+(self.Nwafer+1)*80/self.gui_const.screen_scaling
             Button_cancel = ttk.Button(self.window_position_size, text = " Cancel ",command = self.window_position_size.destroy)
             Button_cancel.place(x=X,y=Y,anchor='center')
         
@@ -1598,27 +1588,27 @@ class Root(tk.Tk):
                     self.entry_sample[i][j].configure(bg="white")
                 except:
                     error=1
-                    self.entry_sample[i][j].configure(bg=color_error)
+                    self.entry_sample[i][j].configure(bg=self.gui_const.color_error)
         
         if error==0:
             self.window_position_size.destroy()
                 
     def stitchImage_popup(self):
         Proceed=1
-        posX,posY=10/scaling_factor,120/scaling_factor
-        height,width=190/scaling_factor,780/scaling_factor
+        posX,posY=10/self.gui_const.screen_scaling,120/self.gui_const.screen_scaling
+        height,width=190/self.gui_const.screen_scaling,780/self.gui_const.screen_scaling
         try:
             if self.filename == "":
                 Proceed=0
-                self.errorFrame(posX,posY,width,height,color_error)
+                self.errorFrame(posX,posY,width,height,self.gui_const.color_error)
                 self.Label_image.configure(text="Specify working folder")
             
             else:
                 Proceed=1
-                self.errorFrame(posX,posY,width,height,color_set[0])
+                self.errorFrame(posX,posY,width,height,self.gui_const.color_set[0])
         except :
             Proceed=0            
-            self.errorFrame(posX,posY,width,height,color_error)         
+            self.errorFrame(posX,posY,width,height,self.gui_const.color_error)         
             self.Label_image.configure(text="Specify working folder")
         
         if Proceed==1 and os.path.exists(self.filename+"/log_file.dat"):
@@ -1641,28 +1631,28 @@ class Root(tk.Tk):
             self.Label_image.configure(text = "No log file\nUse left pannel to create one")
         
         if Proceed==1 and is_there_analysed_pictures>0 and self.stitching_running==0:
-            self.window_loadimage = tk.Toplevel(bg=color_set[0],bd=2)
+            self.window_loadimage = tk.Toplevel(bg=self.gui_const.color_set[0],bd=2)
             self.window_loadimage.wm_iconbitmap('icon.ico')
-            self.window_loadimage.geometry("%dx%d%+d%+d" % (int(1500/scaling_factor), 300/scaling_factor, (2560/2)/scaling_factor, (1440/2)/scaling_factor))
+            self.window_loadimage.geometry("%dx%d%+d%+d" % (int(1500/self.gui_const.screen_scaling), 300/self.gui_const.screen_scaling, (2560/2)/self.gui_const.screen_scaling, (1440/2)/self.gui_const.screen_scaling))
             
             self.window_loadimage.grab_set()
                 
             text_attention="There are already stitched images.\nDo you want to erase them and stitch again?\nOr do you want to load them?"
                 
-            label = tk.Label(self.window_loadimage, text=text_attention,bg=color_set[0],font=('helvetica', size_s))
+            label = tk.Label(self.window_loadimage, text=text_attention,bg=self.gui_const.color_set[0],font=('helvetica', self.gui_const.police_sizes[1]))
             label.pack(fill='x', padx=50, pady=5)
 
             button_yes = ttk.Button(self.window_loadimage, text="Load", command=self.loadImage)
             button_no = ttk.Button(self.window_loadimage, text="Erase", command=self.stitchImage)
                                 
-            button_no.place(x=600/scaling_factor,y=260/scaling_factor,anchor='s')
-            button_yes.place(x=900/scaling_factor,y=260/scaling_factor,anchor='s')      
+            button_no.place(x=600/self.gui_const.screen_scaling,y=260/self.gui_const.screen_scaling,anchor='s')
+            button_yes.place(x=900/self.gui_const.screen_scaling,y=260/self.gui_const.screen_scaling,anchor='s')      
         
         elif Proceed==1 and self.stitching_running==1:
             X0=1350
             Y0=350+150
-            self.label_molo = tk.Label(self,  text="please be patient", fg='black', font=('helvetica', size_xs), bg = color_set[1])
-            self.label_molo.place(x=X0/scaling_factor, y=Y0/scaling_factor, anchor = 'center')
+            self.label_molo = tk.Label(self,  text="please be patient", fg='black', font=('helvetica', self.gui_const.police_sizes[2]), bg = self.gui_const.color_set[1])
+            self.label_molo.place(x=X0/self.gui_const.screen_scaling, y=Y0/self.gui_const.screen_scaling, anchor = 'center')
             
         elif Proceed==1 and self.stitching_running==0:
             self.stitchImage()
@@ -1678,7 +1668,7 @@ class Root(tk.Tk):
             self.img_wafer.destroy()
         
         self.queue_stitch = queue.Queue()
-        Stitcher.ThreadedStitcher(self.queue_stitch,w,h,self.filename+"/Wafer_"+str(indice).zfill(2),self.Nosepiece,scaling_factor,indice,self.load,self.overlap).start()
+        Stitcher.ThreadedStitcher(self.queue_stitch,w,h,self.filename+"/Wafer_"+str(indice).zfill(2),self.Nosepiece,self.gui_const.screen_scaling,indice,self.load,self.overlap).start()
         self.after(20, self.process_queue_stitch)
                 
     def stitchImage(self):
@@ -1737,21 +1727,21 @@ class Root(tk.Tk):
                 
         ## Folder (Specify folder)
         #Proceed=1
-        posX,posY=10/scaling_factor,120/scaling_factor
-        height,width=190/scaling_factor,780/scaling_factor
+        posX,posY=10/self.gui_const.screen_scaling,120/self.gui_const.screen_scaling
+        height,width=190/self.gui_const.screen_scaling,780/self.gui_const.screen_scaling
         try:
             if self.filename == "":
                 Proceed=0
-                self.errorFrame(posX,posY,width,height,color_error)
+                self.errorFrame(posX,posY,width,height,self.gui_const.color_error)
                 self.label_hunt.configure(text="Specify working folder")
             
             else:
                 Proceed=1
-                self.errorFrame(posX,posY,width,height,color_set[0])
+                self.errorFrame(posX,posY,width,height,self.gui_const.color_set[0])
 
         except :
             Proceed=0            
-            self.errorFrame(posX,posY,width,height,color_error)         
+            self.errorFrame(posX,posY,width,height,self.gui_const.color_error)         
             self.label_hunt.configure(text="Specify working folder")
         
         
@@ -1793,14 +1783,14 @@ class Root(tk.Tk):
                 self.label_hunt.configure(text="No log files")
                                 
         
-        posX,posY=810/scaling_factor,760/scaling_factor
-        height,width=100/scaling_factor,780/scaling_factor
+        posX,posY=810/self.gui_const.screen_scaling,760/self.gui_const.screen_scaling
+        height,width=100/self.gui_const.screen_scaling,780/self.gui_const.screen_scaling
         if Proceed==1:
             self.material=f"{self.user}/{self.Var_hunt_material.get()}"
-            self.errorFrame(posX,posY,width,height,color_set[0])
+            self.errorFrame(posX,posY,width,height,self.gui_const.color_set[0])
             if self.material == self.user+"/":
                 Proceed=0
-                self.errorFrame(posX,posY,width,height,color_error)
+                self.errorFrame(posX,posY,width,height,self.gui_const.color_error)
                 self.label_hunt.configure(text="Specify flake type")
                 
             
@@ -1808,17 +1798,17 @@ class Root(tk.Tk):
         if Proceed==1:
             self.targeted_area = self.Entry_size.get()
             
-            posX,posY=1300/scaling_factor,760/scaling_factor
-            height,width=100/scaling_factor,280/scaling_factor
+            posX,posY=1300/self.gui_const.screen_scaling,760/self.gui_const.screen_scaling
+            height,width=100/self.gui_const.screen_scaling,280/self.gui_const.screen_scaling
             try :
                 self.targeted_area=float(self.targeted_area)
                 if self.targeted_area<10:
                     self.targeted_area=10
-                self.errorFrame(posX,posY,width,height,color_set[0])
+                self.errorFrame(posX,posY,width,height,self.gui_const.color_set[0])
                 Proceed=1
             except:
                 Proceed=0
-                self.errorFrame(posX,posY,width,height,color_error)        
+                self.errorFrame(posX,posY,width,height,self.gui_const.color_error)        
                 self.label_hunt.configure(text="Specify area")
         
         ## Check AI
@@ -1882,7 +1872,7 @@ class Root(tk.Tk):
                 self.stitch_counter=0
                 self.queue_load = queue.Queue()
                 self.process_queue_load()
-                Stitcher.ThreadedLoader(self.queue_load,self.filename,scaling_factor,self.Nwafer).start()
+                Stitcher.ThreadedLoader(self.queue_load,self.filename,self.gui_const.screen_scaling,self.Nwafer).start()
 
                 
             
@@ -1898,7 +1888,7 @@ class Root(tk.Tk):
                 X0,Y0=msg[2],msg[3]
                 
                 
-                self.img_wafer = tk.Label(self, image=msg[1], bg = color_set[1])
+                self.img_wafer = tk.Label(self, image=msg[1], bg = self.gui_const.color_set[1])
                 self.img_wafer.image = msg[1]
                 self.img_wafer.place(x=X0,y=Y0,anchor='nw')
                 self.after(100, self.process_queue_load)
