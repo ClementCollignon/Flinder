@@ -10,6 +10,7 @@ class GuiConstants(object):
         with open(path) as config:
             lines = config.readlines()
             screen_scaling = lines[1].split("\t")[1][:-1]
+            screen_scaling = float(screen_scaling)
         return screen_scaling
     
     def __get_police_sizes(self):
