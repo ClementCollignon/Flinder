@@ -88,82 +88,30 @@ class Root(tk.Tk):
         button_macro.config(command = self.checkEverything)
 
     def setup_stitching_panel(self):
-        #Image stitching pannel
-        X,Y=830/self.gui_const.screen_scaling, 10/self.gui_const.screen_scaling
-        Label_stitch = tk.Label(self,  text="Stitch Image", fg='black', font=self.gui_const.fonts["l"], bg = self.gui_const.color_set[0])
-        Label_stitch.place(x=X, y=Y, anchor = 'nw')
-        
-        X,Y,height,width=1350/self.gui_const.screen_scaling, 380/self.gui_const.screen_scaling,480/self.gui_const.screen_scaling,480/self.gui_const.screen_scaling
-        Frame_stitched_image=tk.Frame(self,height=height,width=width,bg=self.gui_const.color_set[1])
-        Frame_stitched_image.place(x=X,y=Y,anchor='center')
-        self.Label_image = tk.Label(self,  text="No Image\nto Display", fg='black', font=self.gui_const.fonts["xs"], bg = self.gui_const.color_set[1])
-        self.Label_image.place(x=X, y=Y, anchor = 'center')
-        
-        X=950/self.gui_const.screen_scaling
-        Button_stitch = ttk.Button(self, text = "Stitch",command = self.stitchImage_popup)
-        Button_stitch.place(x=X,y=Y,anchor='center')
+        label_image, button_stitch = self.gui_setup.setup_stitching_panel()
+        self.label_image = label_image
+        button_stitch.config(command = self.stitchImage_popup)
     
     def setup_hunt_panel(self):
-        X,Y=830/self.gui_const.screen_scaling,650/self.gui_const.screen_scaling
-        Label_flake_hunt = tk.Label(self,  text="Flake Hunt", fg='black', font=self.gui_const.fonts["l"], bg = self.gui_const.color_set[0])
-        Label_flake_hunt.place(x=X, y=Y, anchor = 'nw')
+        var_hunt_material = self.gui_setup.setup_hunt_material()
+        entry_size = self.gui_setup.setup_hunt_size()
+        entry_range_min, entry_range_max = self.gui_setup.setup_hunt_range()
+        var_AI, button_train = self.gui_setup.setup_hunt_ai()
+        button_import = self.gui_setup.setup_hunt_import()
+        button_hunt, label_hunt = self.gui_setup.setup_hunt_hunt()
+
+        self.var_hunt_material = var_hunt_material
+        self.var_AI = var_AI
         
-        X,Y=850/self.gui_const.screen_scaling,810/self.gui_const.screen_scaling
-        
-        self.Var_hunt_material = tk.StringVar()
-    
-        Hunt_choices = [""]
-        
-        self.Optionmenu_hunt = tk.OptionMenu(self, self.Var_hunt_material, *Hunt_choices, command = self.actualize_range)
-        self.Optionmenu_hunt.config(font=self.gui_const.fonts["s"],width=14,bg = self.gui_const.color_set[0])
-        self.Optionmenu_hunt.place(x=X,y=Y,anchor='w')
-        
-        Offset=570/self.gui_const.screen_scaling        
-        self.Entry_size = tk.Entry(self,width=6,font=self.gui_const.fonts["s"]) 
-        self.Entry_size.place(x=X+Offset, y=Y, anchor='center')
-        
-        OffsetX,OffsetY=570/self.gui_const.screen_scaling,120/self.gui_const.screen_scaling
-        Label_size = tk.Label(self,  text=u"Size ( \u03bc\u33A1 )", fg='black', font=self.gui_const.fonts["s"], bg = self.gui_const.color_set[0])
-        Label_size.place(x=X+OffsetX, y=Y-OffsetY, anchor = 'n')
-        
-        X,Y=1200/self.gui_const.screen_scaling,1003/self.gui_const.screen_scaling
-        Label_range = tk.Label(self,  text="Range", fg='black', font=self.gui_const.fonts["s"], bg = self.gui_const.color_set[0])
-        Label_range.place(x=X, y=Y, anchor = 'nw')
-        
-        X+=170/self.gui_const.screen_scaling
-        self.Entry_range_min = tk.Entry(self,width=3,font=self.gui_const.fonts["s"], justify="right") 
-        self.Entry_range_min.place(x=X, y=Y, anchor='nw')
-        
-        X+=100/self.gui_const.screen_scaling
-        self.Entry_range_max = tk.Entry(self,width=3,font=self.gui_const.fonts["s"], justify="right") 
-        self.Entry_range_max.place(x=X, y=Y, anchor='nw')
-        
-        X,Y=1000/self.gui_const.screen_scaling,910/self.gui_const.screen_scaling
-        self.button_train =  ttk.Button(self, text = "        Train        ",command = self.check_training)
-        self.button_train.place(x=X,y=Y,anchor='nw')
-        
-        X,Y=1250/self.gui_const.screen_scaling,910/self.gui_const.screen_scaling
-        self.button_import = ttk.Button(self, text = " Import Calibration ",command = self.import_calibration)
-        self.button_import.place(x=X,y=Y,anchor='nw')
-        
-        X,Y=870/self.gui_const.screen_scaling,1000/self.gui_const.screen_scaling
-        self.var_AI = tk.IntVar()
-        self.button_AI = tk.Checkbutton(self, text='Use AI',variable=self.var_AI, onvalue=1, offvalue=0, bg = self.gui_const.color_set[0],font=self.gui_const.fonts["s"])
-        self.button_AI.place(x=X, y=Y, anchor = 'nw')
-        
-        X,Y=830/self.gui_const.screen_scaling,1135/self.gui_const.screen_scaling
-        Button_hunt = ttk.Button(self, text = "Hunt",command = self.Hunt)
-        Button_hunt.place(x=X,y=Y,anchor='w')
-        
-        X,Y,height,width=1000/self.gui_const.screen_scaling,1105/self.gui_const.screen_scaling,130/self.gui_const.screen_scaling,585/self.gui_const.screen_scaling
-        Frame_hunt=tk.Frame(self,height=height,width=width,bg=self.gui_const.color_set[1])
-        Frame_hunt.place(x=X,y=Y,anchor='nw')
-        
-        lw_hunt = tk.Label(self,  text="Progress:", fg='black', font=self.gui_const.fonts["xs"], bg = self.gui_const.color_set[1],justify='left')
-        lw_hunt.place(x=X, y=Y, anchor = 'nw')
-        
-        self.label_hunt = tk.Label(self,  text="", fg='black', font=self.gui_const.fonts["xs"], bg = self.gui_const.color_set[1],justify='left')
-        self.label_hunt.place(x=X+150/self.gui_const.screen_scaling, y=Y, anchor = 'nw')
+        self.entry_size = entry_size
+        self.entry_range_min = entry_range_min
+        self.entry_range_max = entry_range_max
+
+        button_train.config(command = self.check_training)
+        button_import.config(command = self.import_calibration)
+        button_hunt.config(command = self.hunt)
+
+        self.label_hunt = label_hunt
 
     def setup_select_flakes_panel(self):
         #Select flakes
@@ -197,8 +145,8 @@ class Root(tk.Tk):
         self.button_BF = ttk.Button(self, text = " Create Macro ",command = self.create50xmacro)
         self.button_BF.place(x=2150/self.gui_const.screen_scaling,y=(Y0+0/2)/self.gui_const.screen_scaling,anchor='w')
         
-        self.Label_macro_BF=tk.Label(self,  text="Don't type any input\nfor auto-exposure", fg='black', font=self.gui_const.fonts["xs"], bg = self.gui_const.color_set[1])
-        self.Label_macro_BF.place(x=2225/self.gui_const.screen_scaling, y=(Y0+56)/self.gui_const.screen_scaling, anchor = 'n')
+        self.label_macro_BF=tk.Label(self,  text="Don't type any input\nfor auto-exposure", fg='black', font=self.gui_const.fonts["xs"], bg = self.gui_const.color_set[1])
+        self.label_macro_BF.place(x=2225/self.gui_const.screen_scaling, y=(Y0+56)/self.gui_const.screen_scaling, anchor = 'n')
     
     def setup_BFDF_100x_panel(self):
         X0=1650
@@ -278,8 +226,8 @@ class Root(tk.Tk):
         frame_DF=tk.Frame(self,height=100/self.gui_const.screen_scaling,width=320/self.gui_const.screen_scaling,bg=self.gui_const.color_set[1])
         frame_DF.place(x=2070/self.gui_const.screen_scaling,y=(Y0+50)/self.gui_const.screen_scaling,anchor='nw')
         
-        self.Label_macro_DF=tk.Label(self,  text="Don't type any input\nfor auto-exposure", fg='black', font=self.gui_const.fonts["xs"], bg = self.gui_const.color_set[1])
-        self.Label_macro_DF.place(x=2225/self.gui_const.screen_scaling, y=(Y0+56)/self.gui_const.screen_scaling, anchor = 'n')
+        self.label_macro_DF=tk.Label(self,  text="Don't type any input\nfor auto-exposure", fg='black', font=self.gui_const.fonts["xs"], bg = self.gui_const.color_set[1])
+        self.label_macro_DF.place(x=2225/self.gui_const.screen_scaling, y=(Y0+56)/self.gui_const.screen_scaling, anchor = 'n')
 
     def setup_postprocess_freespace_panel(self):
         Y0=1190
@@ -475,10 +423,10 @@ class Root(tk.Tk):
         if len(Hunt_choices) > 0:
             X,Y,Ystep=850/self.gui_const.screen_scaling,810/self.gui_const.screen_scaling,85/self.gui_const.screen_scaling
         
-            self.Optionmenu_hunt = tk.OptionMenu(self, self.Var_hunt_material, *Hunt_choices, command = self.actualize_range)
-            self.Optionmenu_hunt.config(font=self.gui_const.fonts["s"],width=14,bg = self.gui_const.color_set[0])
-            self.Optionmenu_hunt.place(x=X,y=Y,anchor='w')
-            self.Var_hunt_material.set(Hunt_choices[0])
+            self.option_menu_hunt = tk.OptionMenu(self, self.var_hunt_material, *Hunt_choices, command = self.actualize_range)
+            self.option_menu_hunt.config(font=self.gui_const.fonts["s"],width=14,bg = self.gui_const.color_set[0])
+            self.option_menu_hunt.place(x=X,y=Y,anchor='w')
+            self.var_hunt_material.set(Hunt_choices[0])
             self.actualize_range(Hunt_choices[0])
         
         self.window_login.destroy()
@@ -486,16 +434,16 @@ class Root(tk.Tk):
         self.attributes('-topmost', False)
 
     def actualize_range(self,material):
-        #material = self.Var_hunt_material.get()
+        #material = self.var_hunt_material.get()
         calib = f"{MAIN_FOLDER}/Materials/{self.user}/{material}/calibration.dat"
         D=np.genfromtxt(calib)
         thickness = D[:,0]
         rmin,rmax = int(thickness[0]),int(thickness[-1])
-        self.Entry_range_min.delete(0,tk.END)
-        self.Entry_range_max.delete(0,tk.END)
+        self.entry_range_min.delete(0,tk.END)
+        self.entry_range_max.delete(0,tk.END)
 
-        self.Entry_range_min.insert(0,rmin)
-        self.Entry_range_max.insert(0,rmax)
+        self.entry_range_min.insert(0,rmin)
+        self.entry_range_max.insert(0,rmax)
     
     def import_calibration(self):        
         self.window_import = tk.Toplevel(bg=self.gui_const.color_set[0],bd=2)
@@ -524,7 +472,7 @@ class Root(tk.Tk):
         
     
     def check_training(self):
-        material = self.Var_hunt_material.get()
+        material = self.var_hunt_material.get()
         
         path_good = f"{MAIN_FOLDER}/Materials/{self.user}/{material}/NN_database/Good"
         path_bad = f"{MAIN_FOLDER}/Materials/{self.user}/{material}/NN_database/Bad"
@@ -601,8 +549,8 @@ class Root(tk.Tk):
         
         self.queue_train = queue.Queue()
         
-        database_path = f"{MAIN_FOLDER}/Materials/{self.user}/{self.Var_hunt_material.get()}/NN_database"
-        model_path = f"{MAIN_FOLDER}/Materials/{self.user}/{self.Var_hunt_material.get()}"
+        database_path = f"{MAIN_FOLDER}/Materials/{self.user}/{self.var_hunt_material.get()}/NN_database"
+        model_path = f"{MAIN_FOLDER}/Materials/{self.user}/{self.var_hunt_material.get()}"
         filters,kernels = 0, 0 #dummy
         
         self.trainer = ThreadedTrainer.Train(self.queue_train,
@@ -656,14 +604,14 @@ class Root(tk.Tk):
             
     def saveModel(self):
         try:
-            self.model.save_weights(f"{MAIN_FOLDER}/Materials/{self.user}/{self.Var_hunt_material.get()}/trained_model.h5")
+            self.model.save_weights(f"{MAIN_FOLDER}/Materials/{self.user}/{self.var_hunt_material.get()}/trained_model.h5")
             model_json = self.model.to_json()
-            with open(f"{MAIN_FOLDER}/Materials/{self.user}/{self.Var_hunt_material.get()}/trained_model.json", "w") as json_file:
+            with open(f"{MAIN_FOLDER}/Materials/{self.user}/{self.var_hunt_material.get()}/trained_model.json", "w") as json_file:
                 json_file.write(model_json)
             
             self.button_save.configure(text="saved")
             
-            f = open(f"{MAIN_FOLDER}/Materials/{self.user}/{self.Var_hunt_material.get()}/model_details.dat", "w")
+            f = open(f"{MAIN_FOLDER}/Materials/{self.user}/{self.var_hunt_material.get()}/model_details.dat", "w")
             model_detail ="pic size\t100\n"
             model_detail+=f"Epoch\t{self.epoch}\n"
             model_detail+="Accuracy\t"+str(np.round(self.accuracy[1][-1]*100,1))+"\n"
@@ -783,7 +731,7 @@ class Root(tk.Tk):
             if self.filename == "":
                 Proceed=0
                 self.errorFrame(posX,posY,width,height,self.gui_const.color_error)
-                self.Label_image.configure(text="Specify working folder")
+                self.label_image.configure(text="Specify working folder")
             
             else:
                 Proceed=1
@@ -791,7 +739,7 @@ class Root(tk.Tk):
         except :
             Proceed=0            
             self.errorFrame(posX,posY,width,height,self.gui_const.color_error)         
-            self.Label_image.configure(text="Specify working folder")
+            self.label_image.configure(text="Specify working folder")
         
         if Proceed==1:
             self.window_RUSURE = tk.Toplevel(bg=self.gui_const.color_set[0],bd=2)
@@ -846,22 +794,22 @@ class Root(tk.Tk):
               variable=self.nosepiece_selected, 
               value=value).place(x=posX,y=posY,anchor='w')
     
-    def entry_hunt_size(self,text,posX,posY):
-        Offset=480/self.gui_const.screen_scaling
-        variable = tk.IntVar()
-        tk.Checkbutton(self, 
-              indicatoron = 0,
-              text=text,
-              selectcolor = self.gui_const.color_set[2],
-              bg = self.gui_const.color_set[0],
-              width=9,
-              font=self.gui_const.fonts["s"],
-              variable=variable).place(x=posX,y=posY,anchor='w')
+    # def entry_size(self,text,posX,posY):
+    #     Offset=480/self.gui_const.screen_scaling
+    #     variable = tk.IntVar()
+    #     tk.Checkbutton(self, 
+    #           indicatoron = 0,
+    #           text=text,
+    #           selectcolor = self.gui_const.color_set[2],
+    #           bg = self.gui_const.color_set[0],
+    #           width=9,
+    #           font=self.gui_const.fonts["s"],
+    #           variable=variable).place(x=posX,y=posY,anchor='w')
         
-        entry_size = tk.Entry(self,width=5,font=self.gui_const.fonts["s"]) 
-        entry_size.place(x=posX+Offset, y=posY, anchor='center')
+    #     entry_size = tk.Entry(self,width=5,font=self.gui_const.fonts["s"]) 
+    #     entry_size.place(x=posX+Offset, y=posY, anchor='center')
 
-        return variable, entry_size
+    #     return variable, entry_size
     
     def workingfolderDialog(self):
         self.filename = filedialog.askdirectory(initialdir =  "", title = "Select A Folder")
@@ -900,10 +848,10 @@ class Root(tk.Tk):
             self.Nwafer=int(log_lines[2].split("\t")[1])
         elif Proceed==1 and os.path.exists(self.filename+"/log_file.dat")==False:
             Proceed=0
-            self.Label_macro_DF.configure(text = "No log file\nUse left pannel\nto create one")
+            self.label_macro_DF.configure(text = "No log file\nUse left pannel\nto create one")
         
         if Proceed==1:
-            self.material=f"{self.user}/{self.Var_hunt_material.get()}"
+            self.material=f"{self.user}/{self.var_hunt_material.get()}"
             self.queue_combine = queue.Queue()
             
             Auto_functions.ThreadedCombine(self.queue_combine, self.filename,self.Nwafer,self.material).start()
@@ -919,7 +867,7 @@ class Root(tk.Tk):
             if self.filename == "":
                 Proceed=0
                 self.errorFrame(posX,posY,width,height,self.gui_const.color_error)
-                self.Label_macro.configure(text="Specify working folder")
+                self.label_macro.configure(text="Specify working folder")
             
             else:
                 Proceed=1
@@ -928,14 +876,14 @@ class Root(tk.Tk):
         except :
             Proceed=0            
             self.errorFrame(posX,posY,width,height,self.gui_const.color_error)         
-            self.Label_macro.configure(text="Specify working folder")
+            self.label_macro.configure(text="Specify working folder")
         
         posX,posY=10/self.gui_const.screen_scaling,420/self.gui_const.screen_scaling
         height,width=190/self.gui_const.screen_scaling,780/self.gui_const.screen_scaling
         if Proceed==1 and hasattr(self, 'Nwafer')==False:
             Proceed=0
             self.errorFrame(posX,posY,width,height,self.gui_const.color_error)         
-            self.Label_macro.configure(text="Specify wafer position and size")
+            self.label_macro.configure(text="Specify wafer position and size")
         elif Proceed==1 and hasattr(self, 'Nwafer'):
             Proceed=1
             self.errorFrame(posX,posY,width,height,self.gui_const.color_set[0])  
@@ -945,7 +893,7 @@ class Root(tk.Tk):
         if Proceed==1 and hasattr(self, 'sample_dim')==False:
             Proceed=0
             self.errorFrame(posX,posY,width,height,self.gui_const.color_error)         
-            self.Label_macro.configure(text="Specify wafer position and size")
+            self.label_macro.configure(text="Specify wafer position and size")
         elif Proceed==1 and hasattr(self, 'sample_dim'):
             Proceed=1
             self.errorFrame(posX,posY,width,height,self.gui_const.color_set[0])
@@ -954,7 +902,7 @@ class Root(tk.Tk):
         height,width=90/self.gui_const.screen_scaling,780/self.gui_const.screen_scaling
         if Proceed==1 and self.var_auto_hunt.get()==1 and self.var_auto_stitch.get()==0:
             Proceed=0
-            self.Label_macro.configure(text = "Auto Stitch if you Auto Hunt")
+            self.label_macro.configure(text = "Auto Stitch if you Auto Hunt")
             self.errorFrame(posX,posY,width,height,self.gui_const.color_error)
         elif Proceed==1 and self.var_auto_hunt.get()==1 and self.var_auto_stitch.get()==1:
             self.errorFrame(posX,posY,width,height,self.gui_const.color_set[0])
@@ -966,7 +914,7 @@ class Root(tk.Tk):
         posX,posY=810/self.gui_const.screen_scaling,760/self.gui_const.screen_scaling
         height,width=100/self.gui_const.screen_scaling,780/self.gui_const.screen_scaling
         if Proceed==1:
-            self.material=f"{self.user}/{self.Var_hunt_material.get()}"
+            self.material=f"{self.user}/{self.var_hunt_material.get()}"
             self.errorFrame(posX,posY,width,height,self.gui_const.color_set[0])
             if self.var_auto_hunt.get()==1 and self.material == f"{self.user}/":
                 Proceed=0
@@ -975,28 +923,28 @@ class Root(tk.Tk):
         
         if Proceed==1 and self.var_auto_hunt.get()==1:
             try :
-                  print(float(self.Entry_size.get()))
+                  print(float(self.entry_size.get()))
                   self.errorFrame(posX,posY,width,height,self.gui_const.color_set[0])
                   Proceed=1
             except:
                 Proceed=0
                 self.errorFrame(posX,posY,width,height,self.gui_const.color_error)        
-                self.Label_macro.configure(text = "Specify flake size if you Auto Hunt")
+                self.label_macro.configure(text = "Specify flake size if you Auto Hunt")
         
         if Proceed==1 and self.var_auto_hunt.get()==1:
             try :
-                print(float(self.Entry_size.get()))
+                print(float(self.entry_size.get()))
                 self.errorFrame(posX,posY,width,height,self.gui_const.color_set[0])
             except:
                 Proceed=0
                 self.errorFrame(posX,posY,width,height,self.gui_const.color_error)        
-                self.Label_macro.configure(text = "Specify flake size if you Auto Hunt")
+                self.label_macro.configure(text = "Specify flake size if you Auto Hunt")
         
         posX,posY=50/self.gui_const.screen_scaling,880/self.gui_const.screen_scaling
         height,width=115/self.gui_const.screen_scaling,710/self.gui_const.screen_scaling
         if Proceed==1 and self.nosepiece_selected.get()==0:
             Proceed=0
-            self.Label_macro.configure(text = "Specify Nosepiece")
+            self.label_macro.configure(text = "Specify Nosepiece")
             self.errorFrame(posX,posY,width,height,self.gui_const.color_error)
         elif Proceed==1 and self.nosepiece_selected.get()>0:
             self.errorFrame(posX,posY,width,height,self.gui_const.color_set[0])       
@@ -1042,7 +990,7 @@ class Root(tk.Tk):
         wafer="wafers"
         if self.Nwafer==1:
             wafer="wafer"
-        self.Label_macro.configure(text = "Macro created: " + str(self.Nwafer) +" "+wafer+" ..."+str(int(total_shot*0.1125+2.5))+" min",font=self.gui_const.fonts["xs"])
+        self.label_macro.configure(text = "Macro created: " + str(self.Nwafer) +" "+wafer+" ..."+str(int(total_shot*0.1125+2.5))+" min",font=self.gui_const.fonts["xs"])
            
         fieldofview_w=self.scope_const.field_of_view[0]/self.scope_const.factors[indicator]
         fieldofview_h=self.scope_const.field_of_view[1]/self.scope_const.factors[indicator]
@@ -1090,7 +1038,7 @@ class Root(tk.Tk):
             if self.filename == "":
                 Proceed=0
                 self.errorFrame(posX,posY,width,height,self.gui_const.color_error)
-                self.Label_macro_BF.configure(text="Specify working folder")
+                self.label_macro_BF.configure(text="Specify working folder")
             
             else:
                 Proceed=1
@@ -1098,7 +1046,7 @@ class Root(tk.Tk):
         except :
             Proceed=0            
             self.errorFrame(posX,posY,width,height,self.gui_const.color_error)         
-            self.Label_macro_BF.configure(text="Specify working folder")
+            self.label_macro_BF.configure(text="Specify working folder")
             
         if Proceed==1 and os.path.exists(self.filename+"/log_file.dat"):
             log = open(self.filename+"/log_file.dat", "r")
@@ -1109,7 +1057,7 @@ class Root(tk.Tk):
         
         elif Proceed==1 and os.path.exists(self.filename+"/log_file.dat")==False:
             Proceed=0
-            self.Label_macro_BF.configure(text = "No log file\nUse left pannel to create one")
+            self.label_macro_BF.configure(text = "No log file\nUse left pannel to create one")
             
         if Proceed==1:
             Proceed,text,exp50=functions.macro_50x_Proceed(self.filename,self.entry_exposure_BF_50)
@@ -1117,7 +1065,7 @@ class Root(tk.Tk):
         if Proceed == 1:
                 functions.macro50x(self.filename,exp50,self.Nwafer,self.Nosepiece)
         else:
-            self.Label_macro_BF.configure(text=text)
+            self.label_macro_BF.configure(text=text)
             
     def createDFmacro(self):
         Proceed=1
@@ -1127,7 +1075,7 @@ class Root(tk.Tk):
             if self.filename == "":
                 Proceed=0
                 self.errorFrame(posX,posY,width,height,self.gui_const.color_error)
-                self.Label_macro_DF.configure(text="Specify working folder")
+                self.label_macro_DF.configure(text="Specify working folder")
             
             else:
                 Proceed=1
@@ -1135,7 +1083,7 @@ class Root(tk.Tk):
         except :
             Proceed=0            
             self.errorFrame(posX,posY,width,height,self.gui_const.color_error)         
-            self.Label_macro_DF.configure(text="Specify working folder")
+            self.label_macro_DF.configure(text="Specify working folder")
         
         if Proceed==1 and os.path.exists(self.filename+"/log_file.dat"):
             log = open(self.filename+"/log_file.dat", "r")
@@ -1143,7 +1091,7 @@ class Root(tk.Tk):
             self.Nwafer=int(log_lines[2].split("\t")[1])
         elif Proceed==1 and os.path.exists(self.filename+"/log_file.dat")==False:
             Proceed=0
-            self.Label_macro_DF.configure(text = "No log file\nUse left pannel to create one")
+            self.label_macro_DF.configure(text = "No log file\nUse left pannel to create one")
         
         if Proceed==1:
             Proceed,text,exp100BF,exp50DF,exp100DF,gain100BF,gain50DF,gain100DF=functions.macro_DFBF_Proceed(self.filename,self.BF100x,self.DF50x,self.DF100x,self.entry_exposure_BF_100,self.entry_exposure_DF_50,self.entry_exposure_DF_100,self.entry_gain_BF_100,self.entry_gain_DF_50,self.entry_gain_DF_100)
@@ -1160,7 +1108,7 @@ class Root(tk.Tk):
                 print("100x DF")
                 functions.macro50_100x(self.filename,"DF",exp100DF,gain100DF,"100x",self.Nwafer)
         else:
-            self.Label_macro_DF.configure(text=text)
+            self.label_macro_DF.configure(text=text)
     
     def doSelection(self):       
         Proceed = 1
@@ -1458,9 +1406,9 @@ class Root(tk.Tk):
             Image_scan_size = Image_scan_size.resize((image_size, image_size), Image.LANCZOS)
             Render_image_scan_size = ImageTk.PhotoImage(Image_scan_size)
         
-            Label_image_scan_size= tk.Label(self.window_position_size, image=Render_image_scan_size, bg = self.gui_const.color_set[0])
-            Label_image_scan_size.image = Render_image_scan_size
-            Label_image_scan_size.place(x=X, y=Y, anchor='c')
+            label_image_scan_size= tk.Label(self.window_position_size, image=Render_image_scan_size, bg = self.gui_const.color_set[0])
+            label_image_scan_size.image = Render_image_scan_size
+            label_image_scan_size.place(x=X, y=Y, anchor='c')
         
         
             #entries
@@ -1514,7 +1462,7 @@ class Root(tk.Tk):
             if self.filename == "":
                 Proceed=0
                 self.errorFrame(posX,posY,width,height,self.gui_const.color_error)
-                self.Label_image.configure(text="Specify working folder")
+                self.label_image.configure(text="Specify working folder")
             
             else:
                 Proceed=1
@@ -1522,7 +1470,7 @@ class Root(tk.Tk):
         except :
             Proceed=0            
             self.errorFrame(posX,posY,width,height,self.gui_const.color_error)         
-            self.Label_image.configure(text="Specify working folder")
+            self.label_image.configure(text="Specify working folder")
         
         if Proceed==1 and os.path.exists(self.filename+"/log_file.dat"):
             log = open(self.filename+"/log_file.dat", "r")
@@ -1530,7 +1478,7 @@ class Root(tk.Tk):
             self.Nwafer=int(log_lines[2].split("\t")[1])
         elif Proceed==1 and os.path.exists(self.filename+"/log_file.dat")==False:
             Proceed=0
-            self.Label_image.configure(text = "No log file\nUse left pannel to create one")
+            self.label_image.configure(text = "No log file\nUse left pannel to create one")
 
         if Proceed==1:
             are_logfiles_there=0
@@ -1541,7 +1489,7 @@ class Root(tk.Tk):
         
         if Proceed==1 and are_logfiles_there<self.Nwafer-1:
             Proceed=0
-            self.Label_image.configure(text = "No log file\nUse left pannel to create one")
+            self.label_image.configure(text = "No log file\nUse left pannel to create one")
         
         if Proceed==1 and is_there_analysed_pictures>0 and self.variables.stitching_running==0:
             self.window_loadimage = tk.Toplevel(bg=self.gui_const.color_set[0],bd=2)
@@ -1623,12 +1571,12 @@ class Root(tk.Tk):
             AI=[model_path,thresold,image_AI_size]
         
         self.queue_hunt = queue.Queue()
-        t_range = [int(self.Entry_range_min.get()), int(self.Entry_range_max.get())]
+        t_range = [int(self.entry_range_min.get()), int(self.entry_range_max.get())]
         self.hunter = Hunter_parallele.ThreadedHunter(self.queue_hunt,self.filename+"/Wafer_"+str(self.variables.hunt_counter).zfill(2),self.material,self.targeted_area,factor,indice,AI,t_range,self.step_focus_actual)
         self.hunter.start()
         self.after(100, self.process_queue_hunt)
     
-    def Hunt(self):
+    def hunt(self):
         Proceed=1
         ## Is running already
         if Proceed==1:
@@ -1699,7 +1647,7 @@ class Root(tk.Tk):
         posX,posY=810/self.gui_const.screen_scaling,760/self.gui_const.screen_scaling
         height,width=100/self.gui_const.screen_scaling,780/self.gui_const.screen_scaling
         if Proceed==1:
-            self.material=f"{self.user}/{self.Var_hunt_material.get()}"
+            self.material=f"{self.user}/{self.var_hunt_material.get()}"
             self.errorFrame(posX,posY,width,height,self.gui_const.color_set[0])
             if self.material == self.user+"/":
                 Proceed=0
@@ -1709,7 +1657,7 @@ class Root(tk.Tk):
             
         ## Area (Specify area of what you want to hunt)
         if Proceed==1:
-            self.targeted_area = self.Entry_size.get()
+            self.targeted_area = self.entry_size.get()
             
             posX,posY=1300/self.gui_const.screen_scaling,760/self.gui_const.screen_scaling
             height,width=100/self.gui_const.screen_scaling,280/self.gui_const.screen_scaling
@@ -1747,13 +1695,13 @@ class Root(tk.Tk):
         try:
             msg = self.queue_stitch.get(0)
             if msg[0] == 4:
-                self.Label_image.configure(text = msg[1])
+                self.label_image.configure(text = msg[1])
                 self.variables.stitching_running=0
                 if hasattr(self,"label_molo"):
                     self.label_molo.destroy()
                     
             if msg[0] == 3:                    
-                self.Label_image.configure(text = msg[1])                
+                self.label_image.configure(text = msg[1])                
                 self.variables.stitching_running=0
 
                 if hasattr(self,"label_molo"):
@@ -1762,10 +1710,10 @@ class Root(tk.Tk):
                 self.queue_stitch_multi.put(1)
                 
             elif msg[0] == 2 :
-                self.Label_image.configure(text = msg[1])
+                self.label_image.configure(text = msg[1])
                 self.after(20, self.process_queue_stitch)
             elif msg[0] == 1:
-                self.Label_image.configure(text = msg[1])
+                self.label_image.configure(text = msg[1])
                 self.after(20, self.process_queue_stitch)
         except queue.Empty:
             self.after(20, self.process_queue_stitch)
@@ -1807,12 +1755,12 @@ class Root(tk.Tk):
                 self.after(100, self.process_queue_load)
             
             if msg[0] == 2:
-                self.Label_image.configure(text = "")
+                self.label_image.configure(text = "")
                 if self.var_auto_hunt.get()==1:
-                    self.Hunt()
+                    self.hunt()
         
             elif msg[0] == 0 :
-                self.Label_image.configure(text = msg[1])
+                self.label_image.configure(text = msg[1])
                 self.after(100, self.process_queue_load)
                 
         except queue.Empty:

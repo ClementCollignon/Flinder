@@ -1,19 +1,5 @@
 import tkinter as tk
 from tkinter import ttk
-from tkinter import filedialog
-
-import os
-import sys
-from constants_and_variables import GuiConstants, ScopeConstants, VariablesStore
-
-import functions
-import Stitcher
-import Hunter_parallele
-import Auto_functions
-import ThreadedTrainer
-
-import numpy as np
-import multiprocessing as mp
 
 class GuiSetup(object):
     """The main GUI.
@@ -192,7 +178,6 @@ class GuiSetup(object):
         height =   55 / self.gui_const.screen_scaling
         width  =  590 / self.gui_const.screen_scaling
         bg     = self.gui_const.color_set[1]
-        
         frame_path_create_macro=tk.Frame(self.main_window,
                                          height = height, width = width, bg = bg)
         frame_path_create_macro.place(x = x, y = y, anchor = anchor)
@@ -206,12 +191,182 @@ class GuiSetup(object):
                                text = text, fg = font_color, font = font, bg = bg)
         label_macro.place(x = x, y = y, anchor = anchor)
         
-        x =   30 / self.gui_const.screen_scaling
-        y = 1170 / self.gui_const.screen_scaling
-        text = "GO"
+        x      =   30 / self.gui_const.screen_scaling
+        y      = 1170 / self.gui_const.screen_scaling
+        text   = "GO"
         anchor = "nw"
-
         button_macro = ttk.Button(self.main_window, text = text)
         button_macro.place(x = x, y = y, anchor = anchor)
 
         return label_macro, button_macro
+    
+    def setup_stitching_panel(self):
+        x = 830 / self.gui_const.screen_scaling
+        y =  10 / self.gui_const.screen_scaling
+        text = "Stitch Image"
+        font_color = "black"
+        font = self.gui_const.fonts["l"]
+        bg = self.gui_const.color_set[0]
+        anchor = 'nw'
+        label_stitch = tk.Label(self.main_window,  text = text, fg = font_color,
+                                font = font, bg = bg)
+        label_stitch.place(x=x, y=y, anchor = anchor)
+        
+        x      = 1350 / self.gui_const.screen_scaling
+        y      =  380 / self.gui_const.screen_scaling
+        height =  480 / self.gui_const.screen_scaling
+        width  =  480 / self.gui_const.screen_scaling
+        bg     = self.gui_const.color_set[1]
+        anchor = "center"
+        frame_stitched_image=tk.Frame(self.main_window,
+                                         height = height, width = width, bg = bg)
+        frame_stitched_image.place(x = x, y = y, anchor = anchor)
+
+        text = "No Image\nto Display"
+        font = self.gui_const.fonts["xs"]
+        label_image = tk.Label(self.main_window,  text = text, fg = font_color,
+                               font = font, bg = bg)
+        label_image.place(x = x, y = y, anchor = anchor)
+        
+        x    = 950 / self.gui_const.screen_scaling
+        text = "Stitch"
+        button_stitch = ttk.Button(self.main_window, text = text)
+        button_stitch.place(x = x, y = y, anchor = anchor)
+
+        return label_image, button_stitch
+    
+    def setup_hunt_material(self):
+        x          = 830 / self.gui_const.screen_scaling
+        y          = 650 / self.gui_const.screen_scaling
+        text       = "Flake Hunt"
+        font_color = "black"
+        font       = self.gui_const.fonts["l"]
+        bg         = self.gui_const.color_set[0]
+        anchor = 'nw'
+        label_flake_hunt = tk.Label(self.main_window,  text = text, fg = font_color, 
+                                    font = font, bg = bg)
+        label_flake_hunt.place(x = x, y = y, anchor = anchor)
+        
+        x                 = 850/self.gui_const.screen_scaling
+        y                 = 810/self.gui_const.screen_scaling
+        var_hunt_material = tk.StringVar()
+        hunt_choices      = [""]
+        font              = self.gui_const.fonts["s"]
+        width             = 14
+        anchor            = 'w'
+        optionmenu_hunt = tk.OptionMenu(self.main_window, var_hunt_material, *hunt_choices)
+        optionmenu_hunt.config(font = font, width = width, bg = bg)
+        optionmenu_hunt.place(x = x, y = y, anchor = anchor)
+
+        return var_hunt_material
+    
+    def setup_hunt_size(self):
+        x          = 1420 / self.gui_const.screen_scaling
+        y          =  810 / self.gui_const.screen_scaling
+        width      = 6
+        font       = self.gui_const.fonts["s"]
+        font_color = "black"
+        bg         = self.gui_const.color_set[0]
+        anchor     = 'center'   
+        entry_size = tk.Entry(self.main_window, width = width, font = font) 
+        entry_size.place(x = x, y = y, anchor = anchor)
+        
+        y      = 690 / self.gui_const.screen_scaling
+        text   = u"Size ( \u03bc\u33A1 )"
+        anchor = 'n'
+        label_size = tk.Label(self.main_window,  text = text, fg = font_color,
+                              font = font, bg = bg)
+        label_size.place(x = x, y = y, anchor = anchor)
+
+        return entry_size
+    
+    def setup_hunt_range(self):
+        x          = 1200 / self.gui_const.screen_scaling
+        y          = 1003 / self.gui_const.screen_scaling
+        text       = "Range"
+        font       = self.gui_const.fonts["s"]
+        font_color = "black"
+        bg         = self.gui_const.color_set[0]
+        anchor     = 'nw'
+        label_range = tk.Label(self.main_window,  text = text, fg = font_color,
+                               font = font, bg = bg)
+        label_range.place(x = x, y = y, anchor = anchor)
+
+        x       = 1370 / self.gui_const.screen_scaling
+        width   = 3
+        font    = self.gui_const.fonts["s"]
+        justify = "right"
+        entry_range_min = tk.Entry(self.main_window, width = width, font = font, 
+                                   justify = justify) 
+        entry_range_min.place(x = x, y = y, anchor = anchor)
+        
+        x = 1470 / self.gui_const.screen_scaling
+        entry_range_max = tk.Entry(self.main_window, width = width, font = font,
+                                    justify = justify) 
+        entry_range_max.place(x = x, y = y, anchor = anchor)
+
+        return entry_range_min, entry_range_max
+
+    def setup_hunt_ai(self):
+        x          = 1000 / self.gui_const.screen_scaling
+        y          =  910 / self.gui_const.screen_scaling
+        text       = "        Train        "
+        anchor     = 'nw'
+        button_train =  ttk.Button(self.main_window, text = text)
+        button_train.place(x = x, y = y, anchor = anchor)
+
+        x          =  870 / self.gui_const.screen_scaling
+        y          = 1000 / self.gui_const.screen_scaling
+        text       = 'Use AI'
+        font       = self.gui_const.fonts["s"]
+        bg         = self.gui_const.color_set[0]
+        var_AI = tk.IntVar()
+        button_AI = tk.Checkbutton(self.main_window, text = text, bg = bg, font=font,
+                                   variable = var_AI, onvalue = 1, offvalue = 0)
+        button_AI.place(x = x, y = y, anchor = anchor)
+
+        return var_AI, button_train
+
+    def setup_hunt_import(self):
+        x          = 1250 / self.gui_const.screen_scaling
+        y          =  910 / self.gui_const.screen_scaling
+        text       = " Import Calibration "
+        anchor     = 'nw'
+        button_import = ttk.Button(self.main_window, text = text)
+        button_import.place(x = x, y = y, anchor = anchor)
+
+        return button_import
+
+    def setup_hunt_hunt(self):
+        x          =  830 / self.gui_const.screen_scaling
+        y          = 1135 / self.gui_const.screen_scaling
+        text       = "Hunt"
+        anchor     = 'w'
+        button_hunt = ttk.Button(self.main_window, text = text)
+        button_hunt.place(x = x, y = y, anchor = anchor)
+        
+        x      = 1000 / self.gui_const.screen_scaling
+        y      = 1105 / self.gui_const.screen_scaling
+        height =  130 / self.gui_const.screen_scaling
+        width  =  585 / self.gui_const.screen_scaling
+        bg     = self.gui_const.color_set[1]
+        anchor = 'nw'
+        frame_hunt=tk.Frame(self.main_window, height = height, width = width, bg = bg)
+        frame_hunt.place(x = x, y = y, anchor = anchor)
+        
+        text = "Progress:"
+        font_color = "black"
+        font = self.gui_const.fonts["xs"]
+        justify = "left"
+        label_progress = tk.Label(self.main_window,  text = text, fg = font_color,
+                               font = font, bg = bg, justify = justify)
+        label_progress.place(x = x , y = y, anchor = anchor)
+        
+        x      = 1150 / self.gui_const.screen_scaling
+        text = ""
+        anchor = "nw"
+        label_hunt = tk.Label(self.main_window,  text = text, fg = font_color, 
+                              font = font, bg = bg, justify = justify)
+        label_hunt.place(x = x, y = y, anchor = anchor)
+
+        return button_hunt, label_hunt
